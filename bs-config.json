@@ -1,12 +1,12 @@
 {
-    "server": {
-        "baseDir": "public"
-    },
-    "notify": false,
-    "port": 8080,
-    "files": ["public/build.js"],
-    "ghostMode": false,
-    "ui": {
-        "port": 8081
-    }
+  "server": {
+    "baseDir": "public"
+  },
+  "notify": false,
+  "port": 8080,
+  "files": ["public/build.js"],
+  "ghostMode": false,
+  "ui": {
+    "port": 8081
+  }
 }
