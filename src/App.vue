@@ -1,6 +1,5 @@
 <template>
   <div class="full">
-      {{state}}
       <a id="home" href="/">Home</a>
       <component :is="state.name" :store="store" :state="state"></component>
   </div>
