@@ -46,8 +46,8 @@ export const createGame = (uid) => {
 };
 
 const pickTime = 5000;
-const drawTime = 5000;
-const guessTime = 15000;
+const drawTime = 30000;
+const guessTime = 30000;
 let waiting = false;
 const onRound = (dispatch, getState) => {
   let state = getState();
@@ -63,13 +63,13 @@ const onRound = (dispatch, getState) => {
 
   if (diff < pick) {
     dispatch({ type: 'PICK' });
-    timeout = pick;
+    timeout = pick - diff;
   } else if (diff < pick + drawTime) {
     dispatch({ type: 'DRAW' });
-    timeout = drawTime;
+    timeout = pick + drawTime - diff;
   } else if (diff < pick + drawTime + guessTime) {
     dispatch({ type: 'GUESS' });
-    timeout = guessTime;
+    timeout = pick + drawTime + guessTime - diff;
   } else {
     dispatch({ type: 'LOBBY' });
   }

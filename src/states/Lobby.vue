@@ -30,7 +30,7 @@
     // TODO:
     watch: {
       'state.nick' () {
-        this.store.dispatch(joinGame(this.state.uid, '-KUeoeab0oyLFIWeQLEN'));
+        // this.store.dispatch(joinGame(this.state.uid, '-KUeoeab0oyLFIWeQLEN'));
       }
     },
 

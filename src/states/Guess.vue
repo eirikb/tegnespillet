@@ -28,12 +28,12 @@
       },
       by() {
         let s = this.state;
-        return s.users[this.getUid(s)];
+        return (s.users || {})[this.getUid(s)];
       }
     },
     methods: {
       getUid(s) {
-        let users = Object.keys(s.users);
+        let users = Object.keys(s.users || {});
         let pos = users.indexOf(s.uid);
         pos = (pos + 1) % users.length;
         return users[pos];
@@ -49,3 +49,10 @@
     }
   };
 </script>
+
+<style scoped="true">
+img {
+  width: 100vw;
+  height: 50vh;
+}
+</style>
