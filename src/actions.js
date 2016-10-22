@@ -131,3 +131,4 @@ export const getWords = count =>
   fb.once('words/norsk')
   .then(res => Object.values(res))
   .then(words => Array.from(Array(count).keys()).map(() => words.splice(Math.random() * words.length, 1)[0]));
+  

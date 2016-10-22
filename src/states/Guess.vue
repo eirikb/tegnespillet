@@ -42,7 +42,7 @@
         let s = this.state;
         let users = Object.keys(s.users);
         let pos = users.indexOf(s.uid);
-        pos = (pos + 1) % users.length;
+        pos = (pos + this.state.round) % users.length;
         let uid = users[pos];
         pick(this.state.key, uid, this.state.round + 1, this.guess);
       }
@@ -51,8 +51,8 @@
 </script>
 
 <style scoped="true">
-img {
-  width: 100vw;
-  height: 50vh;
-}
+  img {
+    width: 100vw;
+    height: 50vh;
+  }
 </style>
