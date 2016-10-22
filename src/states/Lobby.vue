@@ -16,19 +16,27 @@
 </template>
 
 <script>
-  import { setNick, getGameByPin, createGame } from '../actions';
+  import { setNick, getGameByPin, createGame, joinGame } from '../actions';
 
   export default {
-    props: ['state'],
+    props: ['store', 'state'],
     data() {
       return {
         info: '',
         pin: window.localStorage.pin
       };
     },
+
+    // TODO:
+    watch: {
+      'state.nick' () {
+        this.store.dispatch(joinGame(this.state.uid, '-KUeoeab0oyLFIWeQLEN'));
+      }
+    },
+
     methods: {
       create() {
-        createGame(this.state.uid).then(key => console.log(key));
+        createGame(this.state.uid).then(key => this.store.dispatch(joinGame(this.state.uid, key)));
       },
       setNick() {
         console.log(this.state.uid, this.state.nick);
@@ -36,13 +44,13 @@
       },
       joinGame() {
         this.info = 'Looking up game...';
-        getGameByPin(this.pin).then(game => {
-          if (!game) {
+        getGameByPin(this.pin).then(res => {
+          if (!res) {
             this.info = 'Game not found';
             return;
           }
-          localStorage.pin = this.pin;
-          console.log('game', game);
+          window.localStorage.pin = this.pin;
+          this.store.dispatch(joinGame(this.state.uid, res.game));
         });
       }
     }

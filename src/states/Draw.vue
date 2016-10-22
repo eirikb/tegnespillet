@@ -1,10 +1,10 @@
 <template>
   <div>
-  <img ref="res">
+  Draw!
+  <h1>Draw "{{word}}" <small v-if="by">({{by}})</small></h1>
     <canvas ref="canvas"></canvas>
     <div class="bottom" ref="button">
       <button @click="clear">Clear</button>
-      <button @click="save">Save</button>
     </div>
   </div>
 </template>
@@ -12,12 +12,26 @@
 <script>
   import signature_pad from 'signature_pad';
   import toBlob from 'canvas-to-blob';
-  console.log(toBlob);
 
   import fb from '../fb';
 
   export default {
     props: ['state'],
+    computed: {
+      word() {
+        let s = this.state;
+        return (((s.rounds || [])[s.round] || {})[s.uid] || {}).word;
+      },
+      by() {
+        let s = this.state;
+        if (!s.round) return null;
+        
+        let users = Object.keys(s.users);
+        let pos = users.indexOf(s.uid);
+        pos = (pos - 1) % users.length;
+        return s.users[users[pos]];
+      }
+    },
     mounted() {
       let canvas = this.$refs.canvas;
       let button = this.$refs.button;
@@ -33,30 +47,19 @@
         backgroundColor: 'rgb(255, 255, 255)'
       });
       resizeCanvas();
-
-      let ready = false;
-      fb.db.ref('test').on('child_added', ref => {
-        if (!ready) return;
-        console.log('ref', ref, 'key', ref.key, ref.getKey(), ref.val());
-        fb.storage.ref().child(`${ref.key}.jpg`).getDownloadURL().then(url => {
-          console.log(url);
-          this.$refs.res.src = url;
-        });
-      });
-      setTimeout(() => ready = true, 3000);
+    },
+    beforeDestroy() {
+      let data = this.$refs.canvas.toDataURL('image/jpeg');
+      let blob = toBlob(data);
+      let s = this.state;
+      let key = `game/${s.key}/rounds/${s.round}/${s.uid}/drawing`;
+      fb.storage.ref().child(`${key}.jpg`).put(blob)
+        .then(res => res.downloadURL)
+        .then(drawing => fb.db.ref(key).set(drawing));
     },
     methods: {
       clear() {
         this.drawing.clear();
-      },
-      save() {
-
-        let data = this.$refs.canvas.toDataURL('image/jpeg');
-        let blob = toBlob(data);
-        let res = fb.db.ref('test').push();
-        fb.storage.ref().child(`${res.key}.jpg`).put(blob).then(() => {
-          res.update({ uid: this.state.uid });
-        });
       }
     }
   };

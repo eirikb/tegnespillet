@@ -17,6 +17,7 @@ export default {
     auth: firebase.auth(),
     db: db,
     storage: firebase.storage(),
+    // get: url => window.fetch(`https://drawesome-fd8ec.firebaseio.com/${url}`).then(res => res.json()),
     stamp: () => db.ref('.info/serverTimeOffset').once('value').then(res => res.val()),
     TIMESTAMP: firebase.database.ServerValue.TIMESTAMP,
     once: ref => db.ref(ref).once('value').then(res => res.val()),
