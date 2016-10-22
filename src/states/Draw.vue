@@ -5,6 +5,7 @@
     <canvas ref="canvas"></canvas>
     <div class="bottom" ref="button">
       <button @click="clear">Clear</button>
+      <button @click="save">Save</button>
     </div>
   </div>
 </template>
@@ -25,7 +26,7 @@
       by() {
         let s = this.state;
         if (!s.round) return null;
-        
+
         let users = Object.keys(s.users);
         let pos = users.indexOf(s.uid);
         pos = (pos - 1) % users.length;
@@ -48,18 +49,22 @@
       });
       resizeCanvas();
     },
-    beforeDestroy() {
-      let data = this.$refs.canvas.toDataURL('image/jpeg');
-      let blob = toBlob(data);
-      let s = this.state;
-      let key = `game/${s.key}/rounds/${s.round}/${s.uid}/drawing`;
-      fb.storage.ref().child(`${key}.jpg`).put(blob)
-        .then(res => res.downloadURL)
-        .then(drawing => fb.db.ref(key).set(drawing));
-    },
+    beforeDestroy() {},
     methods: {
       clear() {
-        this.drawing.clear();
+        if (window.prompt('sure?')) {
+          this.drawing.clear();
+        }
+      },
+      save() {
+        let data = this.$refs.canvas.toDataURL('image/jpeg');
+        data = data.slice(data.indexOf(',') + 1);
+        // let blob = toBlob(data);
+        let s = this.state;
+        let key = `game/${s.key}/rounds/${s.round}/${s.uid}/drawing`;
+        fb.storage.ref().child(`${key}.jpg`).putString(data, 'base64')
+          .then(res => res.downloadURL)
+          .then(drawing => fb.db.ref(key).set(drawing));
       }
     }
   };
