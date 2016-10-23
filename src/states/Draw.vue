@@ -1,11 +1,9 @@
 <template>
   <div>
-  Draw!
   <h1>Draw "{{word}}" <small v-if="by">({{by}})</small></h1>
     <canvas ref="canvas"></canvas>
     <div class="bottom" ref="button">
       <button @click="clear">Clear</button>
-      <button @click="save">Save</button>
     </div>
   </div>
 </template>
@@ -13,24 +11,18 @@
 <script>
   import signature_pad from 'signature_pad';
   import toBlob from 'canvas-to-blob';
+  import { getTarget } from '../actions';
 
   import fb from '../fb';
 
   export default {
-    props: ['state'],
+    props: ['state', 'store'],
     computed: {
       word() {
-        let s = this.state;
-        return (((s.rounds || [])[s.round] || {})[s.uid] || {}).word;
+        return getTarget(this.state).word;
       },
       by() {
-        let s = this.state;
-        if (!s.round) return null;
-
-        let users = Object.keys(s.users);
-        let pos = users.indexOf(s.uid);
-        pos = (pos - 1) % users.length;
-        return s.users[users[pos]];
+        return getTarget(this.state).nick;
       }
     },
     mounted() {
@@ -49,22 +41,18 @@
       });
       resizeCanvas();
     },
-    beforeDestroy() {},
+    beforeDestroy() {
+      let data = this.$refs.canvas.toDataURL('image/jpeg');
+      let blob = toBlob(data);
+      let s = this.state;
+      let key = `game/${s.key}/rounds/${s.round}/${s.uid}/drawing`;
+      fb.storage.ref().child(`${key}.jpg`).put(blob)
+        .then(res => res.downloadURL)
+        .then(drawing => fb.db.ref(key).set(drawing));
+    },
     methods: {
       clear() {
-        if (window.prompt('sure?')) {
-          this.drawing.clear();
-        }
-      },
-      save() {
-        let data = this.$refs.canvas.toDataURL('image/jpeg');
-        data = data.slice(data.indexOf(',') + 1);
-        // let blob = toBlob(data);
-        let s = this.state;
-        let key = `game/${s.key}/rounds/${s.round}/${s.uid}/drawing`;
-        fb.storage.ref().child(`${key}.jpg`).putString(data, 'base64')
-          .then(res => res.downloadURL)
-          .then(drawing => fb.db.ref(key).set(drawing));
+        this.drawing.clear();
       }
     }
   };

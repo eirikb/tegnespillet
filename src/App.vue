@@ -1,7 +1,6 @@
 <template>
   <div class="full">
-      <a id="home" href="/">Home</a>
-      <button @click="clean">Clean bean</button>
+      <!--<button @click="clean">Clean bean</button>-->
       <component :is="state.name" :store="store" :state="state"></component>
   </div>
 </template>

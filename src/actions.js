@@ -131,4 +131,22 @@ export const getWords = count =>
   fb.once('words/norsk')
   .then(res => Object.values(res))
   .then(words => Array.from(Array(count).keys()).map(() => words.splice(Math.random() * words.length, 1)[0]));
-  
+
+
+export const getTarget = (s, roundDiff, userDiff) => {
+  roundDiff = roundDiff || 0;
+  userDiff = userDiff || 0;
+  let round = s.round + roundDiff;
+  let users = Object.keys(s.users || {});
+  let pos = users.indexOf(s.uid);
+  pos = (pos + userDiff) % users.length;
+  let uid = users[pos];
+  let res = ((s.rounds || {})[round] || {})[uid] || {};
+  return {
+    round,
+    uid,
+    nick: (s.users || {})[uid],
+    word: res.word,
+    drawing: res.drawing
+  };
+};

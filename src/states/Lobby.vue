@@ -1,13 +1,14 @@
 <template>
   <div>
   <div>
-      <input v-model="state.nick" placeholder="Nick">
-      <button @click="setNick">Ok</button>
+      <input v-model="state.nick" placeholder="Nick" required>
     </div>
     <div>
-      <input type="number" v-model="pin" placeholder="Join game (PIN)">
-      <button @click="joinGame">Ok</button>
-      {{info}}
+      <form @submit.prevent="joinGame">
+        <input type="number" v-model="pin" placeholder="Join game (PIN)">
+        <button type="submit">Ok</button>
+        {{info}}
+      </form>
     </div>
     <div>
       <button @click="create">Create</button>
@@ -36,14 +37,12 @@
 
     methods: {
       create() {
-        createGame(this.state.uid).then(key => this.store.dispatch(joinGame(this.state.uid, key)));
-      },
-      setNick() {
-        console.log(this.state.uid, this.state.nick);
         setNick(this.state.uid, this.state.nick);
+        createGame(this.state.uid).then(key => this.store.dispatch(joinGame(this.state.uid, key)));
       },
       joinGame() {
         this.info = 'Looking up game...';
+        setNick(this.state.uid, this.state.nick);
         getGameByPin(this.pin).then(res => {
           if (!res) {
             this.info = 'Game not found';
