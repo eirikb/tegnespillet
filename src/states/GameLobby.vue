@@ -4,7 +4,7 @@
     <button @click="start" v-if="state.owner">Start</button>
     <div v-if="results.length === 0">
       <h1 v-if="!isNaN(state.round) && state.round > 0">Round {{state.round + 1}}</h1>
-      <hr>
+      <hr/>
       Users:
       <div v-for="(nick, uid) in state.users">
         {{nick}}
@@ -13,7 +13,7 @@
     
     <div v-for="result in results">
       <div v-if="result.word">
-        <hr>
+        <hr/>
         <h2>Word: {{result.word}} <small>({{result.owner}})</small></h2>
       </div>
       
@@ -41,24 +41,43 @@
         let s = this.state;
         let users = Object.keys(s.users || {});
         users.sort();
-        if (users.length === 0 || s.round < users.length - 3 || !s.rounds) return [];
+        if (users.length === 0 || s.round < users.length - 2 || !s.rounds) return [];
 
         let res = [];
         users.forEach(uid => {
           if (!s.rounds[0][uid]) return;
 
-          res.push({ word: s.rounds[0][uid].word, owner: s.users[uid] });
-          res.push({ drawing: s.rounds[0][uid].drawing, owner: s.users[uid] });
-          let pos = users.indexOf(uid);
-          for (let round = 1; round <= s.round + 1; round++) {
+          let rr = Object.keys(s.rounds);
+          rr.sort();
+          rr.forEach(round => {
+            round = parseInt(round, 10);
+            let pos = users.indexOf(uid);
             let p = (pos + round) % users.length;
             let u = users[p];
             let r = s.rounds[round][u];
             if (r) {
-              res.push({ guess: r.word, owner: s.users[u] });
+              if (round === 0) {
+                res.push({ word: r.word, owner: s.users[u] });
+              } else {
+                res.push({ guess: r.word, owner: s.users[u] });
+              }
               res.push({ drawing: r.drawing, owner: s.users[u] });
             }
-          }
+          });
+
+
+          // res.push({ word: s.rounds[0][uid].word, owner: s.users[uid] });
+          // res.push({ drawing: s.rounds[0][uid].drawing, owner: s.users[uid] });
+          // let pos = users.indexOf(uid);
+          // for (let round = 1; round <= s.round; round++) {
+          //   let p = (pos + round) % users.length;
+          //   let u = users[p];
+          //   let r = s.rounds[round][u];
+          //   if (r) {
+          //     res.push({ guess: r.word, owner: s.users[u] });
+          //     res.push({ drawing: r.drawing, owner: s.users[u] });
+          //   }
+          // }
         });
         return res;
       }

@@ -117,7 +117,7 @@ export const joinGame = (uid, key) => (dispatch, getState) => {
 };
 
 export const startGame = (key, users, round) => {
-  round = (round + 1) % (Object.keys(users).length - 2);
+  round = (round + 1) % (Object.keys(users).length - 1);
   fb.db.ref(`game/${key}/round`).update({ id: isNaN(round) ? 0 : round, ping: fb.TIMESTAMP });
 };
 

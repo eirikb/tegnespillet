@@ -1,9 +1,7 @@
 <template>
   <div>
     <ProgressBar :timeout="5"></ProgressBar>
-    Pick
-    <hr>
-    selected: {{word}}
+    Pick word:
     <div v-for="w in words">
       <label>
         <input type="radio" name="w" v-bind:value="w" v-model="word">
