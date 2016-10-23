@@ -1,6 +1,7 @@
 <template>
   <div>
-  <h1>Draw "{{word}}" <small v-if="by">({{by}})</small></h1>
+    <ProgressBar :timeout="30"></ProgressBar>
+    <h2>Draw "{{word}}" <small v-if="by">({{by}})</small></h2>
     <canvas ref="canvas"></canvas>
     <div class="bottom" ref="button">
       <button @click="clear">Clear</button>
@@ -9,6 +10,7 @@
 </template>
 
 <script>
+  import ProgressBar from '../ProgressBar.vue';
   import signature_pad from 'signature_pad';
   import toBlob from 'canvas-to-blob';
   import { getTarget } from '../actions';
@@ -16,6 +18,7 @@
   import fb from '../fb';
 
   export default {
+    components: { ProgressBar },
     props: ['state', 'store'],
     computed: {
       word() {
@@ -59,18 +62,3 @@
     }
   };
 </script>
-
-<style scoped="true">
-  img {
-    position: absolute;
-    right: 0;
-    width: 200px;
-    height: 200px;
-  }
-  
-  .bottom {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-  }
-</style>

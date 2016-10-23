@@ -1,5 +1,6 @@
 <template>
   <div>
+    <ProgressBar :timeout="5"></ProgressBar>
     Pick
     <hr>
     selected: {{word}}
@@ -13,9 +14,11 @@
 </template>
 
 <script>
+  import ProgressBar from '../ProgressBar.vue';
   import { getWords, pick } from '../actions';
 
   export default {
+    components: { ProgressBar },
     props: ['state'],
     data() {
       return {

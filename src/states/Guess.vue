@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h1>Guess drawing by {{by}}</h1>
+    <ProgressBar :timeout="30"></ProgressBar>
+    <h2>Guess drawing by {{by}}</h2>
     <img v-if="drawing" :src="drawing">
     <div>
       <form @submit.prevent="save">
@@ -12,9 +13,11 @@
 </template>
 
 <script>
+  import ProgressBar from '../ProgressBar.vue';
   import { pick, getTargetUser, getTarget } from '../actions';
 
   export default {
+    components: { ProgressBar },
     props: ['state'],
     data() {
       return {
@@ -43,9 +46,3 @@
     }
   };
 </script>
-
-<style scoped="true">
-  img {
-    width: 75vw;
-  }
-</style>

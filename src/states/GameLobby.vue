@@ -2,8 +2,8 @@
   <div>
     <h1>{{state.pin}}</h1>
     <button @click="start" v-if="state.owner">Start</button>
-    <div v-if="!results">
-      <h1 v-if="!isNaN(state.round)">Round {{state.round + 1}}</h1>
+    <div v-if="results.length === 0">
+      <h1 v-if="!isNaN(state.round) && state.round > 0">Round {{state.round + 1}}</h1>
       <hr>
       Users:
       <div v-for="(nick, uid) in state.users">
@@ -35,28 +35,28 @@
 
   export default {
     props: ['state'],
-    
+
     computed: {
       results() {
         let s = this.state;
         let users = Object.keys(s.users || {});
         users.sort();
-        if (users.length === 0 || s.round < users.length -3 || !s.rounds) return [];
-        
+        if (users.length === 0 || s.round < users.length - 3 || !s.rounds) return [];
+
         let res = [];
         users.forEach(uid => {
           if (!s.rounds[0][uid]) return;
-          
-          res.push({word: s.rounds[0][uid].word, owner: s.users[uid]});
-          res.push({drawing: s.rounds[0][uid].drawing, owner: s.users[uid]});
+
+          res.push({ word: s.rounds[0][uid].word, owner: s.users[uid] });
+          res.push({ drawing: s.rounds[0][uid].drawing, owner: s.users[uid] });
           let pos = users.indexOf(uid);
           for (let round = 1; round <= s.round + 1; round++) {
-            let p = (pos  + round) % users.length;
+            let p = (pos + round) % users.length;
             let u = users[p];
             let r = s.rounds[round][u];
             if (r) {
-              res.push({guess: r.word, owner: s.users[u]});
-              res.push({drawing: r.drawing, owner: s.users[u]});
+              res.push({ guess: r.word, owner: s.users[u] });
+              res.push({ drawing: r.drawing, owner: s.users[u] });
             }
           }
         });

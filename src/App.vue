@@ -12,7 +12,7 @@
 
   //TODO:
   import fb from './fb';
-  
+
   export default {
     components: Object.assign({}, states),
     props: ['store'],
@@ -26,7 +26,7 @@
       this.store.dispatch(auth());
     },
     //TODO:
-    methods:{
+    methods: {
       clean() {
         fb.db.ref(`game/${this.state.key}`).update({
           round: null,
@@ -41,5 +41,21 @@
   html,
   body {
     margin: 0;
+  }
+  
+  .bottom {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+  }
+  
+  img {
+    width: 75vw;
+  }
+  
+  .progress {
+    height: 5px;
+    width: 100%;
+    background-color: #3498db;
   }
 </style>
