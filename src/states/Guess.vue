@@ -3,8 +3,10 @@
     <h1>Guess drawing by {{by}}</h1>
     <img v-if="drawing" :src="drawing">
     <div>
-      <input v-model="guess" placeholder="Guess">
-      <button @click="save">ok</button>
+      <form @submit.prevent="save">
+        <input v-model="guess" placeholder="Guess">
+        <button type="submit">ok</button>
+      </form>
     </div>
   </div>
 </template>
