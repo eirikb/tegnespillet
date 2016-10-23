@@ -26,6 +26,8 @@
       }
     },
     mounted() {
+      this.round = this.state.round;
+      
       let canvas = this.$refs.canvas;
       let button = this.$refs.button;
 
@@ -45,7 +47,7 @@
       let data = this.$refs.canvas.toDataURL('image/jpeg');
       let blob = toBlob(data);
       let s = this.state;
-      let key = `game/${s.key}/rounds/${s.round}/${s.uid}/drawing`;
+      let key = `game/${s.key}/rounds/${this.round}/${s.uid}/drawing`;
       fb.storage.ref().child(`${key}.jpg`).put(blob)
         .then(res => res.downloadURL)
         .then(drawing => fb.db.ref(key).set(drawing));

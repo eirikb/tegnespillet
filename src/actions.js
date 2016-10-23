@@ -117,7 +117,7 @@ export const joinGame = (uid, key) => (dispatch, getState) => {
 };
 
 export const startGame = (key, users, round) => {
-  round = (round + 1) % (Object.keys(users).length - 1);
+  round = (round + 1) % (Object.keys(users).length - 2);
   fb.db.ref(`game/${key}/round`).update({ id: isNaN(round) ? 0 : round, ping: fb.TIMESTAMP });
 };
 
@@ -133,19 +133,28 @@ export const getWords = count =>
   .then(words => Array.from(Array(count).keys()).map(() => words.splice(Math.random() * words.length, 1)[0]));
 
 
-export const getTarget = (s, roundDiff, userDiff) => {
-  roundDiff = roundDiff || 0;
+export const getTargetUser = (s, userDiff)  => {
   userDiff = userDiff || 0;
-  let round = s.round + roundDiff;
   let users = Object.keys(s.users || {});
+  users.sort();
   let pos = users.indexOf(s.uid);
   pos = (pos + userDiff) % users.length;
   let uid = users[pos];
-  let res = ((s.rounds || {})[round] || {})[uid] || {};
   return {
-    round,
     uid,
     nick: (s.users || {})[uid],
+  };
+};
+
+export const getTarget = (s, roundDiff, userDiff) => {
+  roundDiff = roundDiff || 0;
+  let user = getTargetUser(s, userDiff);
+  let round = s.round + roundDiff;
+  let res = ((s.rounds || {})[round] || {})[user.uid] || {};
+  return {
+    round,
+    uid: user.uid,
+    nick: user.nick,
     word: res.word,
     drawing: res.drawing
   };
