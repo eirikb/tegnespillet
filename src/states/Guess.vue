@@ -14,7 +14,8 @@
 
 <script>
   import ProgressBar from '../ProgressBar.vue';
-  import { pick, getTargetUser, getTarget } from '../actions';
+  import { getTarget } from '../utils';
+  import { setGuess } from '../actions';
 
   export default {
     components: { ProgressBar },
@@ -32,16 +33,16 @@
     },
     computed: {
       drawing() {
-        return getTarget(this.state, 0, 1).drawing;
+        return getTarget(this.state).drawing;
       },
       by() {
-        return getTargetUser(this.state, 1).nick;
+        return getTarget(this.state).drawingBy;
       }
     },
     methods: {
       save() {
-        let target = getTargetUser(this.state, 2);
-        pick(this.state.key, target.uid, this.round + 1, this.guess);
+        let guessPath = getTarget(this.state).guessPath;
+        setGuess(guessPath, this.state.uid, this.guess);
       }
     }
   };

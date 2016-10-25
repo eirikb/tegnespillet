@@ -31,7 +31,7 @@
     // TODO:
     watch: {
       'state.nick' () {
-        // this.store.dispatch(joinGame(this.state.uid, '-KUeoeab0oyLFIWeQLEN'));
+        // this.store.dispatch(joinGame(this.state.uid, '-KUxlt2Dvc3LJxdvNh0r'));
       }
     },
 
@@ -48,7 +48,6 @@
             this.info = 'Game not found';
             return;
           }
-          window.localStorage.pin = this.pin;
           this.store.dispatch(joinGame(this.state.uid, res.game));
         });
       }

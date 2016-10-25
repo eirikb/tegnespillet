@@ -12,10 +12,8 @@
 <script>
   import ProgressBar from '../ProgressBar.vue';
   import signature_pad from 'signature_pad';
-  import toBlob from 'canvas-to-blob';
-  import { getTarget } from '../actions';
-
-  import fb from '../fb';
+  import { getTarget } from '../utils';
+  import { setDrawing } from '../actions';
 
   export default {
     components: { ProgressBar },
@@ -25,12 +23,13 @@
         return getTarget(this.state).word;
       },
       by() {
-        return getTarget(this.state).nick;
+        return '';
+        // return getTarget(this.state).drawin;
       }
     },
     mounted() {
       this.round = this.state.round;
-      
+
       let canvas = this.$refs.canvas;
       let button = this.$refs.button;
 
@@ -48,12 +47,8 @@
     },
     beforeDestroy() {
       let data = this.$refs.canvas.toDataURL('image/jpeg');
-      let blob = toBlob(data);
-      let s = this.state;
-      let key = `game/${s.key}/rounds/${this.round}/${s.uid}/drawing`;
-      fb.storage.ref().child(`${key}.jpg`).put(blob)
-        .then(res => res.downloadURL)
-        .then(drawing => fb.db.ref(key).set(drawing));
+      let path = getTarget(this.state).drawPath;
+      setDrawing(path, this.state.uid, data);
     },
     methods: {
       clear() {
