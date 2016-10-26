@@ -2,7 +2,7 @@
   <div class="full">
   <!--{{(state.uid || '').slice(0, 4)}}-->
       <!--<button @click="clean">Clean bean</button>-->
-      <button @click="reset()">Reset</button>
+      <!--<button @click="reset()">Reset</button>-->
       <!--<button @click="hack('game-lobby')">GameLobby</button>-->
       <!--<button @click="hack('pick')">Pick</button>-->
       <!--<button @click="hack('draw')">Draw</button>-->

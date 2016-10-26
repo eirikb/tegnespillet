@@ -12,13 +12,13 @@
     </div>
     
     <div v-for="result in results">
-    <hr/>
+      <hr/>
       <h1>{{result.nick}} got the word {{result.word}}</h1>
       <div v-for="result in result.results">
         <h2 v-if="result.guess">{{result.guessBy}} guessed {{result.guess}}</h2>
         <div v-if="result.drawing">
           <h2>{{result.drawingBy}} drew:</h2>
-          <img :src="result.drawing">
+          <img :src="result.drawing"/>
         </div>
       </div>
     </div>
@@ -35,10 +35,10 @@
 
     computed: {
       results() {
+        if (this.state.done !== true) return [];
+        
         let users = this.state.users;
         let keys = Object.keys(users || {});
-        let length = Object.keys(this.state[0] || {}).length;
-        if (keys.length !== (length - 2) / 2) return [];
         
         return Object.keys(users).map(uid => {
           let pos = getPos(users, uid);
@@ -61,7 +61,7 @@
 
     methods: {
       start() {
-        startGame(this.state.key, this.state.users, this.state.round);
+        startGame(this.state.key, this.state.users, this.state.round, this.state.done);
       }
     }
   };

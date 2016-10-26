@@ -31,7 +31,7 @@
     // TODO:
     watch: {
       'state.nick' () {
-        // this.store.dispatch(joinGame(this.state.uid, '-KUxlt2Dvc3LJxdvNh0r'));
+        // this.store.dispatch(joinGame(this.state.uid, '-KV1wuvO7qppZ6uJbbRF'));
       }
     },
 

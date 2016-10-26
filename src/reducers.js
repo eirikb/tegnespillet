@@ -1,3 +1,6 @@
+const isDone = state =>
+  state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
+
 const lobby = (state = {
   name: ''
 }, action) => {
@@ -17,7 +20,7 @@ const lobby = (state = {
     case 'USER':
       let users = state.users || {};
       users[action.uid] = action.nick;
-      return Object.assign({}, state, { users });
+      return Object.assign({}, state, { users, done: isDone(state) });
 
     case 'OWNER':
       return Object.assign({}, state, { owner: action.owner });
@@ -26,7 +29,7 @@ const lobby = (state = {
       return Object.assign({}, state, { stamp: action.stamp });
 
     case 'ROUND':
-      return Object.assign({}, state, { round: action.round, ping: action.ping });
+      return Object.assign({}, state, { round: action.round, ping: action.ping, done: isDone(state) });
 
     case 'PICK':
       return Object.assign({}, state, { name: 'pick' });
@@ -41,8 +44,9 @@ const lobby = (state = {
       return Object.assign({}, state, { name: 'game-lobby' });
 
     case 'RESULTS':
-      return Object.assign({}, state, action.results);
+      return Object.assign({}, state, Object.assign({ done: isDone(state) }, action.results));
 
+      // TODO:
     case 'HACK':
       if (!action.hack) return state;
       return Object.assign({}, state, { name: action.hack });

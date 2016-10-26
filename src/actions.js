@@ -53,7 +53,6 @@ let t1;
 const onRound = (dispatch, getState) => {
   let state = getState();
   let diff = Date.now() - state.ping + state.stamp;
-  console.log('diff', diff);
   if (t1) {
     clearTimeout(t1);
   }
@@ -123,9 +122,9 @@ export const joinGame = (uid, key) => (dispatch, getState) => {
   });
 };
 
-export const startGame = (key, users, round) => {
-  round = (round + 1) % (Object.keys(users).length - 2);
-  round = isNaN(round) ? 0 : round;
+export const startGame = (key, users, round, done) => {
+  round++;
+  if (isNaN(round) || done === true) round = 0;
   fb.db.ref(`game/${key}/round`).set({ round, ping: fb.TIMESTAMP });
 };
 
