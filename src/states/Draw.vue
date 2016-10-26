@@ -24,7 +24,6 @@
       },
       by() {
         return '';
-        // return getTarget(this.state).drawin;
       }
     },
     mounted() {

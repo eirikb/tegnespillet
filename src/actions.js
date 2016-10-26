@@ -47,12 +47,12 @@ export const createGame = (uid) => {
 };
 
 const pickTime = 5000;
-const drawTime = 10000;
-const guessTime = 10000;
+const drawTime = 30000;
+const guessTime = 30000;
 let t1;
 const onRound = (dispatch, getState) => {
   let state = getState();
-  let diff = Date.now() - state.ping + getState().stamp;
+  let diff = Date.now() - state.ping + state.stamp;
   console.log('diff', diff);
   if (t1) {
     clearTimeout(t1);
@@ -63,7 +63,7 @@ const onRound = (dispatch, getState) => {
     pick = pickTime;
   }
 
-  if (diff < pick) {
+  if (state.round === 0 && diff < pick) {
     dispatch({ type: 'PICK' });
     timeout = pick - diff;
   } else if (diff < pick + drawTime) {
@@ -98,7 +98,11 @@ export const joinGame = (uid, key) => (dispatch, getState) => {
     users.forEach(u => u.off('value'));
     users = Object.keys(us).map(uid => {
       let ref = fb.db.ref(`users/${uid}`);
-      ref.on('value', uu => dispatch({ type: 'USER', uid: uid, nick: uu.val().nick }));
+      ref.on('value', uu => {
+        let user = uu.val();
+        if (!user) return;
+        dispatch({ type: 'USER', uid: uid, nick: user.nick });
+      });
       return ref;
     });
   });
@@ -106,37 +110,24 @@ export const joinGame = (uid, key) => (dispatch, getState) => {
   fb.on(`game/${key}/hack`, hack => dispatch({ type: 'HACK', hack }));
 
   fb.on(`game/${key}/results`, results => {
-    onRound(dispatch, getState);
     dispatch({ type: 'RESULTS', results });
   });
 
-  // fb.on(`game/${key}/round`, round => {
-  //   if (!round) {
-  //     dispatch({ type: 'ROUND', id: -1 });
-  //     return;
-  //   }
-  //   dispatch({ type: 'ROUND', id: round.id, ping: round.ping });
-  //   onRound(dispatch, getState);
-  // });
-
-  // fb.on(`game/${key}/rounds`, rounds => {
-  //   dispatch({ type: 'ROUNDS', rounds });
-  // });
+  fb.on(`game/${key}/round`, round => {
+    if (!round) {
+      dispatch({ type: 'ROUND', id: -1 });
+      return;
+    }
+    dispatch({ type: 'ROUND', round: round.round, ping: round.ping });
+    onRound(dispatch, getState);
+  });
 };
 
 export const startGame = (key, users, round) => {
   round = (round + 1) % (Object.keys(users).length - 2);
   round = isNaN(round) ? 0 : round;
-  let ref = fb.db.ref(`game/${key}/results`);
-  if (round === 0) ref.set({ round, ping: fb.TIMESTAMP });
-  else ref.update({ round, ping: fb.TIMESTAMP });
+  fb.db.ref(`game/${key}/round`).set({ round, ping: fb.TIMESTAMP });
 };
-
-// export const pick = (key, uid, round, word) =>
-//   fb.db.ref(`game/${key}/rounds/${round}/${uid}`).update({ word });
-
-// export const drawing = (key, uid, round, drawing) =>
-//   fb.db.ref(`game/${key}/rounds/${round}/${uid}`).update({ drawing });
 
 export const answer = (key, round, pos, value) =>
   fb.db.ref(`game/${key}/rounds/${round}/${pos}`).update({ value });

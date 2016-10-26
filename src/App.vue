@@ -2,7 +2,7 @@
   <div class="full">
   <!--{{(state.uid || '').slice(0, 4)}}-->
       <!--<button @click="clean">Clean bean</button>-->
-      <!--<button @click="reset()">Reset</button>-->
+      <button @click="reset()">Reset</button>
       <!--<button @click="hack('game-lobby')">GameLobby</button>-->
       <!--<button @click="hack('pick')">Pick</button>-->
       <!--<button @click="hack('draw')">Draw</button>-->
@@ -39,6 +39,7 @@
       reset() {
         fb.db.ref(`game/${this.state.key}/hack`).set(null);
         fb.db.ref(`game/${this.state.key}/results`).set(null);
+        fb.db.ref(`words/norsk`).set(['Kake', 'Hest', 'Ulv', 'Måne', 'Hus', 'Bil', 'Båt', 'Rompe', 'Hår', 'Hårføner', 'Lommebok']);
       },
       clean() {
         fb.db.ref(`game/${this.state.key}`).update({

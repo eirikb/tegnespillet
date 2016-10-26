@@ -24,7 +24,7 @@
     data() {
       return {
         info: '',
-        pin: window.localStorage.pin
+        pin: ''
       };
     },
 

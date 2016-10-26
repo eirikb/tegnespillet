@@ -12,7 +12,6 @@ const lobby = (state = {
       return Object.assign({}, state, { name: 'game-lobby', key: action.key });
 
     case 'PIN':
-      window.localStorage.pin = action.pin;
       return Object.assign({}, state, { pin: action.pin });
 
     case 'USER':
@@ -26,8 +25,8 @@ const lobby = (state = {
     case 'STAMP':
       return Object.assign({}, state, { stamp: action.stamp });
 
-      // case 'ROUND':
-      //   return Object.assign({}, state, { round: action.id, ping: action.ping });
+    case 'ROUND':
+      return Object.assign({}, state, { round: action.round, ping: action.ping });
 
     case 'PICK':
       return Object.assign({}, state, { name: 'pick' });
@@ -43,12 +42,6 @@ const lobby = (state = {
 
     case 'RESULTS':
       return Object.assign({}, state, action.results);
-
-      // case 'ROUNDS':
-      //   return Object.assign({}, state, { rounds: action.rounds });
-
-      // case 'TARGET':
-      //   return Object.assign({}, state, { target: action.target });
 
     case 'HACK':
       if (!action.hack) return state;
