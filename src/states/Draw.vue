@@ -1,7 +1,7 @@
 <template>
   <div>
     <ProgressBar :timeout="30"></ProgressBar>
-    <h2>Draw "{{word}}" <small v-if="by">({{by}})</small></h2>
+    <h2>Draw "{{word}}"</h2>
     <canvas ref="canvas"></canvas>
     <div class="bottom" ref="button">
       <button @click="clear">Clear</button>
@@ -21,9 +21,6 @@
     computed: {
       word() {
         return getTarget(this.state).word;
-      },
-      by() {
-        return '';
       }
     },
     mounted() {

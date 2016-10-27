@@ -46,11 +46,6 @@ const lobby = (state = {
     case 'RESULTS':
       return Object.assign({}, state, Object.assign({ done: isDone(state) }, action.results));
 
-      // TODO:
-    case 'HACK':
-      if (!action.hack) return state;
-      return Object.assign({}, state, { name: action.hack });
-
     default:
       return state;
   }
