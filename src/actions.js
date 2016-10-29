@@ -117,6 +117,10 @@ export const joinGame = (uid, key) => (dispatch, getState) => {
       dispatch({ type: 'ROUND', id: -1 });
       return;
     }
+    if (round.name) {
+      dispatch({ type: 'ROUND_NAME', round: round.round, name: round.name });
+      return;
+    }
     dispatch({ type: 'ROUND', round: round.round, ping: round.ping });
     onRound(dispatch, getState);
   });

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>{{state.pin}}</h1>
-    <button @click="start" v-if="state.owner">Start</button>
+    <button @click="start" v-if="state.owner" :disabled="userCount <= 3">Start</button>
     <div v-if="results.length === 0">
       <h1 v-if="!isNaN(state.round) && state.round > 0">Round {{state.round + 1}}</h1>
       <hr/>
@@ -34,6 +34,9 @@
     props: ['state'],
 
     computed: {
+      userCount() {
+        return Object.keys(this.state.users || {}).length;
+      },
       results() {
         if (this.state.done !== true) return [];
         

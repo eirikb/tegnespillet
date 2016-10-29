@@ -46,6 +46,9 @@ const lobby = (state = {
     case 'RESULTS':
       return Object.assign({}, state, Object.assign({ done: isDone(state) }, action.results));
 
+    case 'ROUND_NAME':
+      return Object.assign({}, state, { round: action.round, name: action.name, done: isDone(state) });
+
     default:
       return state;
   }

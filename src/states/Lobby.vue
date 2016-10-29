@@ -28,6 +28,13 @@
       };
     },
 
+    // TODO:
+    watch: {
+      'state.nick' () {
+        this.store.dispatch(joinGame(this.state.uid, '-KV6K5iP_k-fLBpP9PYV'));
+      }
+    },
+
     methods: {
       create() {
         setNick(this.state.uid, this.state.nick);
