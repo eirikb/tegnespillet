@@ -132,9 +132,6 @@ export const startGame = (key, users, round, done) => {
   fb.db.ref(`game/${key}/round`).set({ round, ping: fb.TIMESTAMP });
 };
 
-export const answer = (key, round, pos, value) =>
-  fb.db.ref(`game/${key}/rounds/${round}/${pos}`).update({ value });
-
 export const fetchWords = count =>
   fb.once('words/norsk')
   .then(res => Object.values(res))
@@ -144,6 +141,7 @@ export const setWord = (key, uid, pos, word) =>
   fb.db.ref(`game/${key}/results/${pos}`).set({ word, owner: uid });
 
 export const setGuess = (path, uid, guess) => {
+  if (!path) return;
   fb.db.ref(path).set(guess);
   fb.db.ref(`${path}-by`).set(uid);
 };

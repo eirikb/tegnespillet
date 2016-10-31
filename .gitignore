@@ -1,1 +1,4 @@
 public/build.js
+node_modules
+*.log
+.idea
