@@ -5,7 +5,7 @@
     </div>
     <div>
       <form @submit.prevent="joinGame">
-        <input type="number" v-model="pin" placeholder="Join game (PIN)">
+        <input type="number" v-model="pin" placeholder="Join game (PIN)" required>
         <button type="submit">Ok</button>
         {{info}}
       </form>
