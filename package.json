@@ -9,7 +9,7 @@
     "start": "npm-run-all index dev",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
     "prepare": "shx rm -rf public/* && shx mkdir -p public",
-    "copy": "shx cp index.html public && shx cp -r dist public && shx cp -r src/2d public",
+    "copy": "shx cp index.html public && shx cp -r dist public",
     "fb-deploy": "firebase deploy",
     "deploy": "npm-run-all index prepare build copy fb-deploy"
   },
@@ -28,6 +28,7 @@
     "file-loader": "^0.9.0",
     "firebase-tools": "^3.0.8",
     "npm-run-all": "^3.1.1",
+    "shx": "^0.2.1",
     "vue-loader": "^9.7.0",
     "webpack": "^2.1.0-beta.25",
     "webpack-dev-server": "^2.1.0-beta.0"
