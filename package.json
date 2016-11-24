@@ -4,7 +4,6 @@
   "author": "Eirik Brandtzæg <eirikb@eirikb.no>",
   "private": true,
   "scripts": {
-    "deploy": "npm-run-all build fb-deploy"
     "index": "pug index.pug",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --inline --hot --host 0.0.0.0",
     "start": "npm-run-all index dev",
