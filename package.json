@@ -4,10 +4,15 @@
   "author": "Eirik Brandtzæg <eirikb@eirikb.no>",
   "private": true,
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack-dev-server --open --inline --hot --host localhost",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "fb-deploy": "firebase deploy",
     "deploy": "npm-run-all build fb-deploy"
+    "index": "pug index.pug",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --inline --hot --host 0.0.0.0",
+    "start": "npm-run-all index dev",
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "prepare": "shx rm -rf public/* && shx mkdir -p public",
+    "copy": "shx cp index.html public && shx cp -r dist public && shx cp -r src/2d public",
+    "fb-deploy": "firebase deploy",
+    "deploy": "npm-run-all index prepare build copy fb-deploy"
   },
   "dependencies": {
     "firebase": "^3.5.2",

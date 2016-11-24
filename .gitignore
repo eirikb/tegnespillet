@@ -1,5 +1,7 @@
-public/build.js
+public
 node_modules
+.c9
 *.log
 .idea
 dist
+index.html
