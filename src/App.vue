@@ -1,25 +1,16 @@
 <template>
   <div class="full">
-    <component :is="state.name" :store="store" :state="state"></component>
+    <!--<component :is="$store.state.name"></component>-->
   </div>
 </template>
 
 <script>
-  import states from './states';
-
-  import { auth } from './actions';
+  // import states from './states';
 
   export default {
-    components: Object.assign({}, states),
-    props: ['store'],
-    data() {
-      return {
-        state: this.store.getState()
-      };
-    },
+    // components: Object.assign({}, states),
     created() {
-      this.store.subscribe(() => this.state = this.store.getState());
-      this.store.dispatch(auth());
+      this.$store.dispatch('auth');
     }
   };
 </script>
