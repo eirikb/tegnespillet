@@ -1,9 +1,21 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import fb from './fb';
+import { db, auth, on, once, stamp, TIMESTAMP } from './fb';
 
 const isDone = state =>
   state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
+
+const fetchPin = () => {
+  let pin = Math.floor(1000 + Math.random() * 9000);
+  let ref = db.ref(`pin/${pin}`);
+  return ref.transaction(pino => pino === null || Date.now() - pino.stamp > 10 * 60 * 1000 ? {
+      stamp: Date.now()
+    } : undefined)
+    .then(res => res.committed ? {
+      pin,
+      ref
+    } : fetchPin());
+};
 
 Vue.use(Vuex);
 
@@ -12,7 +24,9 @@ export default new Vuex.Store({
     name: 'auth',
     key: null,
     uid: null,
-    pin: null
+    pin: null,
+    nick: null,
+    users: []
   },
 
   mutations: {
@@ -34,9 +48,7 @@ export default new Vuex.Store({
       state.pin = pin;
     },
 
-    user(state, data) {
-      const users = state.users || {};
-      users[data.uid] = data.nick;
+    users(state, users) {
       state.users = users;
       state.done = isDone(state);
     },
@@ -80,22 +92,58 @@ export default new Vuex.Store({
       state.done = isDone(state);
       state.round = data.round;
       state.name = data.name;
+    },
+
+    words(state, words) {
+      state.words = words;
+      state.word = words[0];
     }
   },
 
   actions: {
-    auth({ dispatch }) {
-      fb.auth.onAuthStateChanged(user => {
+    auth({ commit, dispatch }) {
+      auth.onAuthStateChanged(user => {
         if (!user) {
-          fb.auth.signInAnonymously();
-          dispatch('authenticated', user.uid);
+          auth.signInAnonymously();
         } else {
-          fb.once(`users/${user.uid}/nick`).then(nick => dispatch('nick', nick));
+          commit('authenticated', user.uid);
+          once(`users/${user.uid}/nick`).then(nick => commit('nick', nick));
         }
       });
     },
 
-    joinGame({ dispatch, commit, state }) {
+    nick({ state }) {
+      db.ref(`users/${state.uid}`).update({ nick: state.nick });
+    },
+
+    createGame({ state }) {
+      return fetchPin().then(res => {
+        const ref = db.ref('game').push({
+          pin: res.pin,
+          owner: state.uid
+        });
+        return res.ref.update({
+          game: ref.key
+        }).then(() => ref.key);
+      });
+    },
+
+    startGame({ state }) {
+      let round = state.round;
+      let done = state.done;
+      round++;
+      if (isNaN(round) || done === true) round = 0;
+      db.ref(`game/${state.key}/round`).set({ round, ping: TIMESTAMP });
+    },
+
+    fetchWords({ commit }, count) {
+      once('words/norsk')
+        .then(res => Object.values(res))
+        .then(words => Array.from(Array(count).keys()).map(() => words.splice(Math.random() * words.length, 1)[0]))
+        .then(words => commit('words', words));
+    },
+
+    joinGame({ dispatch, commit, state }, key) {
       const pickTime = 5000;
       const drawTime = 30000;
       const guessTime = 30000;
@@ -132,36 +180,40 @@ export default new Vuex.Store({
         }
       };
 
-      commit('joinGame', state.key);
-      fb.db.ref(`game/${state.key}/users/${state.uid}`).set(true);
+      commit('joinGame', key);
+      db.ref(`game/${state.key}/users/${state.uid}`).set(true);
 
-      fb.once(`game/${state.key}/pin`).then(pin => commit('pin', pin));
-      fb.once(`game/${state.key}/owner`).then(owner => commit('owner', owner === state.uid));
-      fb.stamp().then(stamp => commit('stamp', stamp));
+      once(`game/${state.key}/pin`).then(pin => commit('pin', pin));
+      once(`game/${state.key}/owner`).then(owner => commit('owner', owner === state.uid));
+      stamp().then(stamp => commit('stamp', stamp));
 
 
-      let users = [];
-      fb.on(`game/${state.key}/users`, us => {
+      let userRefs = [];
+      const users = {};
+      on(`game/${state.key}/users`, us => {
         if (!us) return;
-        users.forEach(u => u.off('value'));
-        users = Object.keys(us).map(uid => {
-          let ref = fb.db.ref(`users/${uid}`);
+        userRefs.forEach(u => u.off('value'));
+        userRefs = Object.keys(us).map(uid => {
+          let ref = db.ref(`users/${uid}`);
           ref.on('value', uu => {
             let user = uu.val();
             if (!user) return;
-            commit('user', { uid, nick: user.nick });
+            users[uid] = { uid, nick: user.nick };
+            commit('users', Object.values(users));
           });
           return ref;
         });
       });
 
-      fb.on(`game/${state.key}/hack`, hack => commit('hack', hack));
+      // TODO: HACK?!
+      // on(`game/${state.key}/hack`, hack => commit('hack', hack));
 
-      fb.on(`game/${state.key}/results`, results => commit('results', results));
+      on(`game/${state.key}/results`, results => commit('results', results));
 
-      fb.on(`game/${state.key}/round`, round => {
+      on(`game/${state.key}/round`, round => {
+        console.log('round', round);
         if (!round) {
-          commit('round', -1);
+          commit('round', { round: -1 });
           return;
         }
         if (round.name) {

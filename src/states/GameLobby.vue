@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h1>{{state.pin}}</h1>
-    <button @click="start" v-if="state.owner" :disabled="userCount <= 3">Start</button>
+    <h1>{{$store.state.pin}}</h1>
+    <button @click="start" v-if="$store.state.owner" :disabled="userCount < 4">Start</button>
     <div v-if="results.length === 0">
-      <h1 v-if="!isNaN(state.round) && state.round > 0">Round {{state.round + 1}}</h1>
+      <h1 v-if="!isNaN($store.state.round) && $store.state.round > 0">Round {{$store.state.round + 1}}</h1>
       <hr/>
       Users:
-      <div v-for="(nick, uid) in state.users">
-        {{nick}}
+      <div v-for="user in $store.state.users">
+        {{user.nick}}
       </div>
     </div>
     
@@ -27,29 +27,27 @@
 </template>
 
 <script>
-  import { startGame } from '../actions';
   import { getPos } from '../utils';
 
   export default {
-    props: ['state'],
-
     computed: {
       userCount() {
-        return Object.keys(this.state.users || {}).length;
+        // return Object.keys(this.$store.state.users || {}).length;
+        return 4;
       },
       results() {
-        if (this.state.done !== true) return [];
-        
-        let users = this.state.users;
+        if (this.$store.state.done !== true) return [];
+
+        let users = this.$store.state.users;
         let keys = Object.keys(users || {});
-        
+
         return Object.keys(users).map(uid => {
           let pos = getPos(users, uid);
-          let res = this.state[pos];
+          let res = this.$store.state[pos];
           return {
             word: res.word,
             nick: users[res.owner],
-            results: Array.from(Array(keys.length-1), (_, round) => {
+            results: Array.from(Array(keys.length - 1), (_, round) => {
               return {
                 drawing: res[`draw-${round}`],
                 drawingBy: users[res[`draw-${round}-by`]],
@@ -64,7 +62,7 @@
 
     methods: {
       start() {
-        startGame(this.state.key, this.state.users, this.state.round, this.state.done);
+        this.$store.dispatch('startGame');
       }
     }
   };

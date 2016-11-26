@@ -1,17 +1,14 @@
 <template>
   <div class="full">
-    <!--<component :is="$store.state.name"></component>-->
+    <component :is="$store.state.name"></component>
   </div>
 </template>
 
 <script>
-  // import states from './states';
+  import states from './states';
 
   export default {
-    // components: Object.assign({}, states),
-    created() {
-      this.$store.dispatch('auth');
-    }
+    components: Object.assign({}, states)
   };
 </script>
 

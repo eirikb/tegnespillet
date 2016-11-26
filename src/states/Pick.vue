@@ -13,12 +13,11 @@
 
 <script>
   import ProgressBar from '../ProgressBar.vue';
-  import { fetchWords, setWord } from '../actions';
+  // import { fetchWords, setWord } from '../actions';
   import { getPos } from '../utils';
 
   export default {
     components: { ProgressBar },
-    props: ['state'],
     data() {
       return {
         word: null,
@@ -27,16 +26,14 @@
     },
     watch: {
       word(word) {
-        let s = this.state;
+        let s = this.$store.state;
         let pos = getPos(s.users, s.uid);
-        setWord(s.key, s.uid, pos, word);
+        console.log('set word!');
+        // setWord(s.key, s.uid, pos, word);
       }
     },
     created() {
-      fetchWords(2).then(words => {
-        this.words = words;
-        this.word = words[0];
-      });
+      this.$store.dispatch('fetchWords', 2);
     }
   };
 </script>

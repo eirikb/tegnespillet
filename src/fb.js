@@ -11,23 +11,24 @@ const config = {
     messagingSenderId: "61685273325"
 };
 firebase.initializeApp(config);
-const db = firebase.database();
-export default {
-    fb: firebase,
-    auth: firebase.auth(),
-    db: db,
-    storage: firebase.storage(),
-    stamp: () => db.ref('.info/serverTimeOffset').once('value').then(res => res.val()),
-    TIMESTAMP: firebase.database.ServerValue.TIMESTAMP,
-    once: ref => db.ref(ref).once('value').then(res => res.val()),
-    on: (ref, cb) => db.ref(ref).on('value', res => {
-        let val = res.val();
-        if (Array.isArray(val)) {
-            val = val.reduce((o, v, i) => {
-                o[i] = v;
-                return o;
-            }, {});
-        }
-        cb(val);
-    })
-};
+
+export const db = firebase.database();
+
+export const auth = firebase.auth();
+
+export const once = ref => db.ref(ref).once('value').then(res => res.val());
+
+export const on = (ref, cb) => db.ref(ref).on('value', res => {
+    let val = res.val();
+    if (Array.isArray(val)) {
+        val = val.reduce((o, v, i) => {
+            o[i] = v;
+            return o;
+        }, {});
+    }
+    cb(val);
+});
+
+export const stamp = () => db.ref('.info/serverTimeOffset').once('value').then(res => res.val());
+
+export const TIMESTAMP = firebase.database.ServerValue.TIMESTAMP;

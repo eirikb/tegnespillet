@@ -1,7 +1,7 @@
 <template>
   <div>
   <div>
-      <input v-model="state.nick" placeholder="Nick" required>
+      <input v-model="$store.state.nick" placeholder="Nick" required>
     </div>
     <div>
       <form @submit.prevent="joinGame">
@@ -17,15 +17,18 @@
 </template>
 
 <script>
-  import { setNick, getGameByPin, createGame, joinGame } from '../actions';
+  // import { setNick, getGameByPin, createGame, joinGame } from '../actions';
 
   export default {
-    props: ['store', 'state'],
     data() {
       return {
         info: '',
         pin: ''
       };
+    },
+
+    created() {
+      this.$store.dispatch('auth');
     },
 
     // TODO:
@@ -37,19 +40,20 @@
 
     methods: {
       create() {
-        setNick(this.state.uid, this.state.nick);
-        createGame(this.state.uid).then(key => this.store.dispatch(joinGame(this.state.uid, key)));
+        this.$store.dispatch('nick');
+        this.$store.dispatch('createGame').then(key =>
+          this.$store.dispatch('joinGame', key));
       },
       joinGame() {
-        this.info = 'Looking up game...';
-        setNick(this.state.uid, this.state.nick);
-        getGameByPin(this.pin).then(res => {
-          if (!res) {
-            this.info = 'Game not found';
-            return;
-          }
-          this.store.dispatch(joinGame(this.state.uid, res.game));
-        });
+        // this.info = 'Looking up game...';
+        // setNick(this.state.uid, this.state.nick);
+        // getGameByPin(this.pin).then(res => {
+        //   if (!res) {
+        //     this.info = 'Game not found';
+        //     return;
+        //   }
+        //   this.store.dispatch(joinGame(this.state.uid, res.game));
+        // });
       }
     }
   };
