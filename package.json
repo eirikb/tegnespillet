@@ -15,6 +15,7 @@
   "dependencies": {
     "canvas-to-blob": "0.0.0",
     "pug-cli": "^1.0.0-alpha6",
+    "signature_pad": "^1.5.3",
     "vue": "^2.1.0"
   },
   "devDependencies": {

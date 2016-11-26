@@ -13,18 +13,18 @@
   import ProgressBar from '../ProgressBar.vue';
   import signature_pad from 'signature_pad';
   import { getTarget } from '../utils';
-  import { setDrawing } from '../actions';
 
   export default {
     components: { ProgressBar },
-    props: ['state', 'store'],
+
     computed: {
       word() {
-        return getTarget(this.state).word;
+        return getTarget(this.$store.state).word;
       }
     },
+
     mounted() {
-      this.round = this.state.round;
+      this.round = this.$store.state.round;
 
       let canvas = this.$refs.canvas;
       let button = this.$refs.button;
@@ -41,11 +41,13 @@
       });
       resizeCanvas();
     },
+
     beforeDestroy() {
       let data = this.$refs.canvas.toDataURL('image/jpeg');
-      let path = getTarget(this.state).drawPath;
-      setDrawing(path, this.state.uid, data);
+      let path = getTarget(this.$store.state).drawPath;
+      this.$store.dispatch('setDrawing', { path, data });
     },
+
     methods: {
       clear() {
         this.drawing.clear();

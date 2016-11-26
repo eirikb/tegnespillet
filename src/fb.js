@@ -14,6 +14,8 @@ firebase.initializeApp(config);
 
 export const db = firebase.database();
 
+export const storage = firebase.storage();
+
 export const auth = firebase.auth();
 
 export const once = ref => db.ref(ref).once('value').then(res => res.val());

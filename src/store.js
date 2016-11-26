@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { db, auth, on, once, stamp, TIMESTAMP } from './fb';
+import { db, auth, on, once, stamp, storage, TIMESTAMP } from './fb';
+import toBlob from 'canvas-to-blob';
 
 const isDone = state =>
   state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
@@ -22,11 +23,12 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     name: 'auth',
-    key: null,
-    uid: null,
+    key: '',
+    uid: '',
     pin: null,
-    nick: null,
-    users: []
+    nick: '',
+    users: [],
+    words: []
   },
 
   mutations: {
@@ -96,7 +98,6 @@ export default new Vuex.Store({
 
     words(state, words) {
       state.words = words;
-      state.word = words[0];
     }
   },
 
@@ -137,10 +138,31 @@ export default new Vuex.Store({
     },
 
     fetchWords({ commit }, count) {
-      once('words/norsk')
+      return once('words/norsk')
         .then(res => Object.values(res))
         .then(words => Array.from(Array(count).keys()).map(() => words.splice(Math.random() * words.length, 1)[0]))
         .then(words => commit('words', words));
+    },
+
+    word({ state }, data) {
+      db.ref(`game/${state.key}/results/${data.pos}`)
+        .set({ word: data.word, owner: state.uid });
+    },
+
+    setGuess({ state }, data) {
+      if (!data.path) return;
+      db.ref(data.path).set(data.guess);
+      db.ref(`${data.path}-by`).set(state.uid);
+    },
+
+    setDrawing({ state }, data) {
+      let blob = toBlob(data);
+      storage.ref().child(`${data.path}.jpg`).put(blob)
+        .then(res => res.downloadURL)
+        .then(drawing => {
+          db.ref(data.jpath).set(drawing);
+          db.ref(`${data.jpath}-by`).set(state.uid);
+        });
     },
 
     joinGame({ dispatch, commit, state }, key) {

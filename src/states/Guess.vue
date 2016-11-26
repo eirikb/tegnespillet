@@ -15,37 +15,39 @@
 <script>
   import ProgressBar from '../ProgressBar.vue';
   import { getTarget } from '../utils';
-  import { setGuess } from '../actions';
 
   export default {
     components: { ProgressBar },
-    props: ['state'],
+
     data() {
       return {
         ready: false,
         guess: null
       };
     },
+
     mounted() {
-      this.round = this.state.round;
-      console.log(this.$refs);
+      this.round = this.$store.state.round;
       this.$refs.image.onload = () => this.ready = true;
     },
+
     beforeDestroy() {
       this.save();
     },
+
     computed: {
       drawing() {
-        return getTarget(this.state).drawing;
+        return getTarget(this.$store.state).drawing;
       },
       by() {
-        return getTarget(this.state).drawingBy;
+        return getTarget(this.$store.state).drawingBy;
       }
     },
+
     methods: {
       save() {
-        let guessPath = getTarget(this.state).guessPath;
-        setGuess(guessPath, this.state.uid, this.guess);
+        let path = getTarget(this.$store.state).guessPath;
+        this.$store.dispatch('guess', { path, guess: this.guess });
       }
     }
   };
