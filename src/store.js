@@ -213,7 +213,6 @@ export default new Vuex.Store({
       once(`game/${state.key}/owner`).then(owner => commit('owner', owner === state.uid));
       stamp().then(stamp => commit('stamp', stamp));
 
-
       let userRefs = [];
       const users = {};
       on(`game/${state.key}/users`, us => {
