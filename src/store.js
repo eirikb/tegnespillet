@@ -156,13 +156,17 @@ export default new Vuex.Store({
     },
 
     setDrawing({ state }, data) {
-      let blob = toBlob(data);
+      let blob = toBlob(data.data);
       storage.ref().child(`${data.path}.jpg`).put(blob)
         .then(res => res.downloadURL)
         .then(drawing => {
           db.ref(data.jpath).set(drawing);
-          db.ref(`${data.jpath}-by`).set(state.uid);
+          db.ref(`${data.path}-by`).set(state.uid);
         });
+    },
+
+    getGameByPin({}, pin) {
+      return once(`pin/${pin}`).then(res => (res || {}).game);
     },
 
     joinGame({ dispatch, commit, state }, key) {

@@ -17,8 +17,6 @@
 </template>
 
 <script>
-  // import { setNick, getGameByPin, createGame, joinGame } from '../actions';
-
   export default {
     data() {
       return {
@@ -45,15 +43,15 @@
           this.$store.dispatch('joinGame', key));
       },
       joinGame() {
-        // this.info = 'Looking up game...';
-        // setNick(this.state.uid, this.state.nick);
-        // getGameByPin(this.pin).then(res => {
-        //   if (!res) {
-        //     this.info = 'Game not found';
-        //     return;
-        //   }
-        //   this.store.dispatch(joinGame(this.state.uid, res.game));
-        // });
+        this.info = 'Looking up game...';
+        this.$store.dispatch('nick');
+        this.$store.dispatch('getGameByPin', this.pin).then(key => {
+          if (!key) {
+            this.info = 'Game not found';
+            return;
+          }
+          this.$store.dispatch('joinGame', key);
+        });
       }
     }
   };
