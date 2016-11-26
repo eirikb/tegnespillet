@@ -227,13 +227,9 @@ export default new Vuex.Store({
         });
       });
 
-      // TODO: HACK?!
-      // on(`game/${state.key}/hack`, hack => commit('hack', hack));
-
       on(`game/${state.key}/results`, results => commit('results', results));
 
       on(`game/${state.key}/round`, round => {
-        console.log('round', round);
         if (!round) {
           commit('round', { round: -1 });
           return;
