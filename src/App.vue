@@ -1,9 +1,8 @@
 <template>
-  <div class="full">
-  <button class="mdl-button mdl-js-button mdl-button--fab">
-  <i class="material-icons">add</i>
-</button>
-    <component :is="$store.state.name"></component>
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col">
+      <component :is="$store.state.name"></component>
+    </div>
   </div>
 </template>
 
@@ -17,5 +16,4 @@
 
 <style lang="sass">
   @import './node_modules/material-design-lite/material';
-  @import  url('https://fonts.googleapis.com/icon?family=Material+Icons');
 </style>

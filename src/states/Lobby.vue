@@ -1,12 +1,12 @@
 <template>
   <div>
   <div>
-      <input v-model="$store.state.nick" placeholder="Nick" required>
+      <mdl-textfield v-model="$store.state.nick" label="Nick" required></mdl-textfield>
     </div>
     <div>
       <form @submit.prevent="joinGame">
-        <input type="number" v-model="pin" placeholder="Join game (PIN)" required>
-        <button type="submit">Ok</button>
+        <mdl-textfield type="number" v-model="pin" label="Join game (PIN)" required></mdl-textfield>
+        <mdl-button type="submit">Ok</mdl-button>
         {{info}}
       </form>
     </div>
