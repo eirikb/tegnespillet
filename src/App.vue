@@ -1,5 +1,8 @@
 <template>
   <div class="full">
+  <button class="mdl-button mdl-js-button mdl-button--fab">
+  <i class="material-icons">add</i>
+</button>
     <component :is="$store.state.name"></component>
   </div>
 </template>
@@ -12,25 +15,7 @@
   };
 </script>
 
-<style>
-  html,
-  body {
-    margin: 0;
-  }
-  
-  .bottom {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-  }
-  
-  img {
-    width: 75vw;
-  }
-  
-  .progress {
-    height: 5px;
-    width: 100%;
-    background-color: #3498db;
-  }
+<style lang="sass">
+  @import './node_modules/material-design-lite/material';
+  @import  url('https://fonts.googleapis.com/icon?family=Material+Icons');
 </style>
