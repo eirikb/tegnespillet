@@ -1,17 +1,17 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { db, auth, on, once, stamp, storage, TIMESTAMP } from './fb';
+import {db, auth, on, once, stamp, storage, TIMESTAMP} from './fb';
 import toBlob from 'canvas-to-blob';
 
 const isDone = state =>
-  state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
+state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
 
 const fetchPin = () => {
   let pin = Math.floor(1000 + Math.random() * 9000);
   let ref = db.ref(`pin/${pin}`);
   return ref.transaction(pino => pino === null || Date.now() - pino.stamp > 10 * 60 * 1000 ? {
-      stamp: Date.now()
-    } : undefined)
+    stamp: Date.now()
+  } : undefined)
     .then(res => res.committed ? {
       pin,
       ref
@@ -22,7 +22,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    name: 'auth',
+    name: window.location.hash.match('words') ? 'words' : 'auth',
     key: '',
     uid: '',
     pin: null,
@@ -102,7 +102,7 @@ export default new Vuex.Store({
   },
 
   actions: {
-    auth({ commit, dispatch }) {
+    auth({commit, dispatch}) {
       auth.onAuthStateChanged(user => {
         if (!user) {
           auth.signInAnonymously();
@@ -113,11 +113,11 @@ export default new Vuex.Store({
       });
     },
 
-    nick({ state }) {
-      db.ref(`users/${state.uid}`).update({ nick: state.nick });
+    nick({state}) {
+      db.ref(`users/${state.uid}`).update({nick: state.nick});
     },
 
-    createGame({ state }) {
+    createGame({state}) {
       return fetchPin().then(res => {
         const ref = db.ref('game').push({
           pin: res.pin,
@@ -129,33 +129,33 @@ export default new Vuex.Store({
       });
     },
 
-    startGame({ state }) {
+    startGame({state}) {
       let round = state.round;
       let done = state.done;
       round++;
       if (isNaN(round) || done === true) round = 0;
-      db.ref(`game/${state.key}/round`).set({ round, ping: TIMESTAMP });
+      db.ref(`game/${state.key}/round`).set({round, ping: TIMESTAMP});
     },
 
-    fetchWords({ commit }, count) {
+    fetchWords({commit}, count) {
       return once('words/norsk')
         .then(res => Object.values(res))
         .then(words => Array.from(Array(count).keys()).map(() => words.splice(Math.random() * words.length, 1)[0]))
         .then(words => commit('words', words));
     },
 
-    word({ state }, data) {
+    word({state}, data) {
       db.ref(`game/${state.key}/results/${data.pos}`)
-        .set({ word: data.word, owner: state.uid });
+        .set({word: data.word, owner: state.uid});
     },
 
-    setGuess({ state }, data) {
+    setGuess({state}, data) {
       if (!data.path) return;
       db.ref(data.path).set(data.guess);
       db.ref(`${data.path}-by`).set(state.uid);
     },
 
-    setDrawing({ state }, data) {
+    setDrawing({state}, data) {
       let blob = toBlob(data.data);
       storage.ref().child(`${data.path}.jpg`).put(blob)
         .then(res => res.downloadURL)
@@ -169,7 +169,7 @@ export default new Vuex.Store({
       return once(`pin/${pin}`).then(res => (res || {}).game);
     },
 
-    joinGame({ dispatch, commit, state }, key) {
+    joinGame({commit, state}, key) {
       const pickTime = 5000;
       const drawTime = 30000;
       const guessTime = 30000;
@@ -223,7 +223,7 @@ export default new Vuex.Store({
           ref.on('value', uu => {
             let user = uu.val();
             if (!user) return;
-            users[uid] = { uid, nick: user.nick };
+            users[uid] = {uid, nick: user.nick};
             commit('users', Object.values(users));
           });
           return ref;
@@ -234,14 +234,14 @@ export default new Vuex.Store({
 
       on(`game/${state.key}/round`, round => {
         if (!round) {
-          commit('round', { round: -1 });
+          commit('round', {round: -1});
           return;
         }
         if (round.name) {
-          commit('roundName', { round: round.round, name: round.name });
+          commit('roundName', {round: round.round, name: round.name});
           return;
         }
-        commit('round', { round: round.round, ping: round.ping });
+        commit('round', {round: round.round, ping: round.ping});
         onRound();
       });
     }

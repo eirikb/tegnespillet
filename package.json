@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "index": "pug index.pug",
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --inline --hot --host 0.0.0.0",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --hot --host 0.0.0.0",
     "start": "npm-run-all index dev",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
     "prepare": "shx rm -rf public/* && shx mkdir -p public",
@@ -14,10 +14,15 @@
   },
   "dependencies": {
     "canvas-to-blob": "0.0.0",
+    "firebase": "^3.6.2",
     "material-design-lite": "^1.2.1",
+    "node-sass": "^3.13.0",
     "pug-cli": "^1.0.0-alpha6",
+    "sass-loader": "^4.0.2",
     "signature_pad": "^1.5.3",
-    "vue": "^2.1.0"
+    "vue": "^2.1.0",
+    "vue-mdl": "^0.10.0",
+    "vuex": "^2.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",

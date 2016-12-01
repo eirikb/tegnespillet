@@ -1,8 +1,6 @@
 <template>
-  <div class="mdl-grid">
-    <div class="mdl-cell mdl-cell--12-col">
-      <component :is="$store.state.name"></component>
-    </div>
+  <div class="full">
+    <component :is="$store.state.name"></component>
   </div>
 </template>
 
@@ -14,6 +12,26 @@
   };
 </script>
 
-<style lang="sass">
-  @import './node_modules/material-design-lite/material';
+<style>
+  html,
+  body {
+    margin: 0;
+  }
+
+  .bottom {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+  }
+
+  img {
+    width: 75vw;
+  }
+
+  .progress {
+    height: 5px;
+    width: 100%;
+    background-color: #3498db;
+  }
+
 </style>

@@ -4,6 +4,7 @@ import GameLobby from './GameLobby.vue';
 import Pick from './Pick.vue';
 import Draw from './Draw.vue';
 import Guess from './Guess.vue';
+import Words from './Words.vue';
 
 export default {
   Auth,
@@ -11,5 +12,6 @@ export default {
   GameLobby,
   Pick,
   Draw,
-  Guess
+  Guess,
+  Words
 };
