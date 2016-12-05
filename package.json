@@ -9,8 +9,15 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
     "prepare": "shx rm -rf public/* && shx mkdir -p public",
     "copy": "shx cp index.html public && shx cp -r dist public",
-    "fb-deploy": "firebase deploy",
+    "fb-deploy": "firebase deploy --project drawesome-fd8ec",
     "deploy": "npm-run-all index prepare build copy fb-deploy"
+  },
+  "babel": {
+    "presets": [
+      ["es2015", {
+        "modules": false
+      }]
+    ]
   },
   "dependencies": {
     "canvas-to-blob": "0.0.0",
