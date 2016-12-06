@@ -18,24 +18,24 @@ const fetchPin = () => {
     } : fetchPin());
 };
 
-const getTarget = (state, uid = state.uid, round = state.round) => {
-  let pos = getPos(state.users, uid, round * 2);
-  let nextPos = getPos(state.users, uid, round * 2 + 1);
-  if (pos < 0 || nextPos < 0) return {};
+// const getTarget = (state, uid = state.uid, round = state.round) => {
+//   let pos = getPos(state.users, uid, round * 2);
+//   let nextPos = getPos(state.users, uid, round * 2 + 1);
+//   if (pos < 0 || nextPos < 0) return {};
 
-  let res = state[pos];
-  let nextRes = state[nextPos];
-  if (!res || !nextRes) return {};
+//   let res = state[pos];
+//   let nextRes = state[nextPos];
+//   if (!res || !nextRes) return {};
 
-  return {
-    nick: state.users[uid],
-    word: round === 0 ? res.word : res[`guess-${round}`],
-    drawing: nextRes[`draw-${round}`],
-    drawingBy: state.users[nextRes[`draw-${round}-by`]],
-    drawPath: `game/${state.key}/results/${pos}/draw-${state.round}`,
-    guessPath: `game/${state.key}/results/${nextPos}/guess-${state.round + 1}`
-  };
-};
+//   return {
+//     nick: state.users[uid],
+//     word: round === 0 ? res.word : res[`guess-${round}`],
+//     drawing: nextRes[`draw-${round}`],
+//     drawingBy: state.users[nextRes[`draw-${round}-by`]],
+//     drawPath: `game/${state.key}/results/${pos}/draw-${state.round}`,
+//     guessPath: `game/${state.key}/results/${nextPos}/guess-${state.round + 1}`
+//   };
+// };
 
 Vue.use(Vuex);
 
@@ -77,10 +77,6 @@ export default new Vuex.Store({
     users(state, users) {
       state.users = users;
       state.done = isDone(state);
-
-      let keys = Object.keys(users || {});
-      keys.sort();
-      state.pos = (keys.indexOf(state.uid)) % keys.length;
     },
 
     owner(state, owner) {
@@ -126,6 +122,13 @@ export default new Vuex.Store({
 
     words(state, words) {
       state.words = words;
+    },
+
+    pos(state) {
+      let keys = Object.keys(state.users || {});
+      keys.sort();
+      state.pos = (keys.indexOf(state.uid) + state.round * 2) % keys.length;
+      state.nextPos = (keys.indexOf(state.uid) + state.round * 2 + 1) % keys.length;
     }
   },
 
@@ -256,6 +259,7 @@ export default new Vuex.Store({
             if (!user) return;
             users[uid] = { uid, nick: user.nick };
             commit('users', Object.values(users));
+            commit('pos');
           });
           return ref;
         });
@@ -273,6 +277,7 @@ export default new Vuex.Store({
           return;
         }
         commit('round', { round: round.round, ping: round.ping });
+        commit('pos');
         onRound();
       });
     }
