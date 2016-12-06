@@ -1,10 +1,11 @@
 <template>
   <div>
     <ProgressBar :timeout="30"></ProgressBar>
-    <h2>Draw "{{word}}"</h2>
+    <h2>Draw "{{$store.state.word}}"</h2>
     <canvas ref="canvas"></canvas>
     <div class="bottom" ref="button">
       <button @click="clear">Clear</button>
+      <button @click="setDrawing">OK</button>
     </div>
   </div>
 </template>
@@ -12,16 +13,9 @@
 <script>
   import ProgressBar from '../ProgressBar.vue';
   import signature_pad from 'signature_pad';
-  import { getTarget } from '../utils';
 
   export default {
     components: { ProgressBar },
-
-    computed: {
-      word() {
-        return getTarget(this.$store.state).word;
-      }
-    },
 
     mounted() {
       this.round = this.$store.state.round;
@@ -43,14 +37,17 @@
     },
 
     beforeDestroy() {
-      let data = this.$refs.canvas.toDataURL('image/jpeg');
-      let path = getTarget(this.$store.state).drawPath;
-      this.$store.dispatch('setDrawing', { path, data });
+      this.setDrawing();
     },
 
     methods: {
       clear() {
         this.drawing.clear();
+      },
+
+      setDrawing() {
+        let data = this.$refs.canvas.toDataURL('image/jpeg');
+        this.$store.dispatch('setDrawing', data);
       }
     }
   };

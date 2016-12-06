@@ -26,32 +26,30 @@
 </template>
 
 <script>
-  import { getPos } from '../utils';
-
   export default {
     computed: {
       results() {
-        if (this.$store.state.done !== true) return [];
+        return [];
+        // if (this.$store.state.done !== true) return [];
 
-        let users = this.$store.state.users;
-        let keys = Object.keys(users || {});
+        // let users = this.$store.state.users;
+        // let keys = Object.keys(users || {});
 
-        return Object.keys(users).map(uid => {
-          let pos = getPos(users, uid);
-          let res = this.$store.state[pos];
-          return {
-            word: res.word,
-            nick: users[res.owner],
-            results: Array.from(Array(keys.length - 1), (_, round) => {
-              return {
-                drawing: res[`draw-${round}`],
-                drawingBy: users[res[`draw-${round}-by`]],
-                guess: res[`guess-${round}`],
-                guessBy: users[res[`guess-${round}-by`]]
-              };
-            })
-          };
-        });
+        // return Object.keys(users).map(uid => {
+        //   let res = this.$store.state[pos];
+        //   return {
+        //     word: res.word,
+        //     nick: users[res.owner],
+        //     results: Array.from(Array(keys.length - 1), (_, round) => {
+        //       return {
+        //         drawing: res[`draw-${round}`],
+        //         drawingBy: users[res[`draw-${round}-by`]],
+        //         guess: res[`guess-${round}`],
+        //         guessBy: users[res[`guess-${round}-by`]]
+        //       };
+        //     })
+        //   };
+        // });
       }
     },
 

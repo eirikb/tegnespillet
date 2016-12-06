@@ -4,6 +4,29 @@
   </div>
 </template>
 
+<style>
+  html,
+  body {
+    margin: 0;
+  }
+  
+  .bottom {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+  }
+  
+  img {
+    width: 75vw;
+  }
+  
+  .progress {
+    height: 5px;
+    width: 100%;
+    background-color: #3498db;
+  }
+</style>
+
 <script>
   import states from './states';
 
@@ -11,27 +34,3 @@
     components: Object.assign({}, states)
   };
 </script>
-
-<style>
-  html,
-  body {
-    margin: 0;
-  }
-
-  .bottom {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-  }
-
-  img {
-    width: 75vw;
-  }
-
-  .progress {
-    height: 5px;
-    width: 100%;
-    background-color: #3498db;
-  }
-
-</style>

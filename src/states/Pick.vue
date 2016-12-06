@@ -13,10 +13,11 @@
 
 <script>
   import ProgressBar from '../ProgressBar.vue';
-  import { getPos } from '../utils';
 
   export default {
-    components: { ProgressBar },
+    components: {
+      ProgressBar
+    },
 
     data() {
       return {
@@ -31,9 +32,7 @@
 
     watch: {
       word(word) {
-        let s = this.$store.state;
-        let pos = getPos(s.users, s.uid);
-        this.$store.dispatch('word', { pos, word });
+        this.$store.dispatch('pickWord', word);
       }
     }
   };
