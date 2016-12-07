@@ -14,12 +14,16 @@
   },
   "babel": {
     "presets": [
-      ["es2015", {
-        "modules": false
-      }]
+      [
+        "es2015",
+        {
+          "modules": false
+        }
+      ]
     ]
   },
   "dependencies": {
+    "babel-polyfill": "^6.16.0",
     "canvas-to-blob": "0.0.0",
     "firebase": "^3.6.2",
     "material-design-lite": "^1.2.1",

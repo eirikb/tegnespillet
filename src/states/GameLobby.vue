@@ -8,7 +8,7 @@
       <hr/>
       Users:
       <div v-for="(nick, uid) in $store.state.users">
-        {{uid}}: {{nick}}
+        {{nick}}
       </div>
     </div>
     

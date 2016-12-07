@@ -6,7 +6,6 @@ import toBlob from 'canvas-to-blob';
 const pickTime = 5000;
 const drawTime = 30000;
 const guessTime = 30000;
-const maxTime = pickTime + drawTime + guessTime;
 
 Vue.use(Vuex);
 
@@ -21,11 +20,11 @@ export default new Vuex.Store({
     nick: '',
     pos: 0,
     nextPos: 0,
-    round: 0,
-    users: null,
-    words: null,
+    round: -1,
+    users: {},
+    words: [],
     stamp: 0,
-    timer: false
+    timer: false,
   },
 
   mutations: {
@@ -73,11 +72,13 @@ export default new Vuex.Store({
       state.pos = (keys.indexOf(state.uid) + state.round * 2) % keys.length;
       state.nextPos = (keys.indexOf(state.uid) + state.round * 2 + 1) % keys.length;
 
-      let res = state.results[state.pos];
-      let nextRes = state.results[state.nextPos];
+      if (state.results) {
+        let res = state.results[state.pos];
+        let nextRes = state.results[state.nextPos];
 
-      state.word = state.round === 0 ? res.word : res[`guess-${state.round}`];
-      state.drawing = nextRes[`draw-${state.round}`];
+        if (res) state.word = state.round === 0 ? res.word : res[`guess-${state.round}`];
+        if (nextRes) state.drawing = nextRes[`draw-${state.round}`];
+      }
 
       state.isOwner = state.owner === state.uid;
       state.isDone = state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
@@ -155,19 +156,23 @@ export default new Vuex.Store({
 
     round({ state, commit }) {
       let diff = Date.now() - state.ping + state.stamp;
+      let pick = 0;
+      if (state.round === 0) pick = pickTime;
+      let maxTime = pick + drawTime + guessTime;
       if (state.timer || isNaN(diff) || diff >= maxTime) return;
 
       commit('startTimer');
-      setTimeout(() => commit('go', 'draw'), pickTime - diff);
-      setTimeout(() => commit('go', 'guess'), pickTime + drawTime - diff);
+      setTimeout(() => commit('go', 'draw'), pick - diff);
+      setTimeout(() => commit('go', 'guess'), pick + drawTime - diff);
       setTimeout(() => commit('stopTimer'), maxTime - diff);
     },
 
     joinGame({ dispatch, commit, state }, key) {
+      commit('joinGame', key);
+
       db.ref(`game/${state.key}/users/${state.uid}`).set(state.nick);
       stamp().then(stamp => commit('stamp', stamp));
 
-      commit('joinGame', key);
       on(`game/${key}`, game => {
         commit('game', game);
         dispatch('round');
