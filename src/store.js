@@ -3,8 +3,10 @@ import Vuex from 'vuex';
 import { db, auth, on, once, stamp, storage, TIMESTAMP } from './fb';
 import toBlob from 'canvas-to-blob';
 
-const isDone = state =>
-  state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
+const pickTime = 5000;
+const drawTime = 30000;
+const guessTime = 30000;
+const maxTime = pickTime + drawTime + guessTime;
 
 const fetchPin = () => {
   let pin = Math.floor(1000 + Math.random() * 9000);
@@ -17,25 +19,6 @@ const fetchPin = () => {
       ref
     } : fetchPin());
 };
-
-// const getTarget = (state, uid = state.uid, round = state.round) => {
-//   let pos = getPos(state.users, uid, round * 2);
-//   let nextPos = getPos(state.users, uid, round * 2 + 1);
-//   if (pos < 0 || nextPos < 0) return {};
-
-//   let res = state[pos];
-//   let nextRes = state[nextPos];
-//   if (!res || !nextRes) return {};
-
-//   return {
-//     nick: state.users[uid],
-//     word: round === 0 ? res.word : res[`guess-${round}`],
-//     drawing: nextRes[`draw-${round}`],
-//     drawingBy: state.users[nextRes[`draw-${round}-by`]],
-//     drawPath: `game/${state.key}/results/${pos}/draw-${state.round}`,
-//     guessPath: `game/${state.key}/results/${nextPos}/guess-${state.round + 1}`
-//   };
-// };
 
 Vue.use(Vuex);
 
@@ -51,8 +34,10 @@ export default new Vuex.Store({
     pos: 0,
     nextPos: 0,
     round: 0,
-    users: [],
-    words: []
+    users: null,
+    words: null,
+    stamp: 0,
+    timer: false
   },
 
   mutations: {
@@ -70,65 +55,44 @@ export default new Vuex.Store({
       state.key = key;
     },
 
-    pin(state, pin) {
-      state.pin = pin;
-    },
-
-    users(state, users) {
-      state.users = users;
-      state.done = isDone(state);
-    },
-
-    owner(state, owner) {
-      state.owner = owner;
-    },
-
     stamp(state, stamp) {
       state.stamp = stamp;
     },
 
-    round(state, data) {
-      state.round = data.round;
-      state.ping = data.ping;
-      state.done = isDone(state);
-    },
-
-    pick(state) {
-      state.name = 'pick';
-    },
-
-    draw(state) {
-      state.name = 'draw';
-    },
-
-    guess(state) {
-      state.name = 'guess';
-    },
-
-    lobby(state) {
-      state.name = 'game-lobby';
-    },
-
-    results(state, results) {
-      state.done = isDone(state);
-      Object.assign(state, results);
-    },
-
-    roundName(state, data) {
-      state.done = isDone(state);
-      state.round = data.round;
-      state.name = data.name;
+    go(state, name) {
+      state.name = name;
     },
 
     words(state, words) {
       state.words = words;
     },
 
-    pos(state) {
+    startTimer(state) {
+      state.name = 'pick';
+      state.timer = true;
+    },
+
+    stopTimer(state) {
+      state.name = 'game-lobby';
+      state.timer = false;
+    },
+
+    game(state, game) {
+      Object.assign(state, game);
+
       let keys = Object.keys(state.users || {});
       keys.sort();
       state.pos = (keys.indexOf(state.uid) + state.round * 2) % keys.length;
       state.nextPos = (keys.indexOf(state.uid) + state.round * 2 + 1) % keys.length;
+
+      let res = state.results[state.pos];
+      let nextRes = state.results[state.nextPos];
+
+      state.word = state.round === 0 ? res.word : res[`guess-${state.round}`];
+      state.drawing = nextRes[`draw-${state.round}`];
+
+      state.isOwner = state.owner === state.uid;
+      state.isDone = state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
     }
   },
 
@@ -165,7 +129,7 @@ export default new Vuex.Store({
       let done = state.done;
       round++;
       if (isNaN(round) || done === true) round = 0;
-      db.ref(`game/${state.key}/round`).set({ round, ping: TIMESTAMP });
+      db.ref(`game/${state.key}`).update({ round, ping: TIMESTAMP });
     },
 
     fetchWords({ commit }, count) {
@@ -189,7 +153,6 @@ export default new Vuex.Store({
     setDrawing({ state }, data) {
       const blob = toBlob(data);
       const path = `game/${state.key}/results/${state.pos}/draw-${state.round}`;
-      console.log('path', path);
       storage.ref().child(`${path}.jpg`).put(blob)
         .then(res => res.downloadURL)
         .then(drawing => {
@@ -202,83 +165,24 @@ export default new Vuex.Store({
       return once(`pin/${pin}`).then(res => (res || {}).game);
     },
 
-    joinGame({ commit, state }, key) {
-      const pickTime = 5000;
-      const drawTime = 30000;
-      const guessTime = 30000;
-      let t1;
+    round({ state, commit }) {
+      let diff = Date.now() - state.ping + state.stamp;
+      if (state.timer || isNaN(diff) || diff >= maxTime) return;
 
-      const onRound = () => {
-        let diff = Date.now() - state.ping + state.stamp;
-        if (t1) {
-          clearTimeout(t1);
-        }
-        let timeout;
-        let pick = 0;
-        if (state.round === 0) {
-          pick = pickTime;
-        }
+      commit('startTimer');
+      setTimeout(() => commit('go', 'draw'), pickTime - diff);
+      setTimeout(() => commit('go', 'guess'), pickTime + drawTime - diff);
+      setTimeout(() => commit('stopTimer'), maxTime - diff);
+    },
 
-        if (state.round === 0 && diff < pick) {
-          commit('pick');
-          timeout = pick - diff;
-        } else if (diff < pick + drawTime) {
-          commit('draw');
-          timeout = pick + drawTime - diff;
-        } else if (diff < pick + drawTime + guessTime) {
-          commit('guess');
-          timeout = pick + drawTime + guessTime - diff;
-        } else {
-          commit('lobby');
-        }
-
-        if (timeout) {
-          t1 = setTimeout(() => {
-            onRound();
-          }, timeout + 500);
-        }
-      };
-
-      commit('joinGame', key);
-      db.ref(`game/${state.key}/users/${state.uid}`).set(true);
-
-      once(`game/${state.key}/pin`).then(pin => commit('pin', pin));
-      once(`game/${state.key}/owner`).then(owner => commit('owner', owner === state.uid));
+    joinGame({ dispatch, commit, state }, key) {
+      db.ref(`game/${state.key}/users/${state.uid}`).set(state.nick);
       stamp().then(stamp => commit('stamp', stamp));
 
-      let userRefs = [];
-      const users = {};
-      on(`game/${state.key}/users`, us => {
-        if (!us) return;
-
-        userRefs.forEach(u => u.off('value'));
-        userRefs = Object.keys(us).map(uid => {
-          let ref = db.ref(`users/${uid}`);
-          ref.on('value', uu => {
-            let user = uu.val();
-            if (!user) return;
-            users[uid] = { uid, nick: user.nick };
-            commit('users', Object.values(users));
-            commit('pos');
-          });
-          return ref;
-        });
-      });
-
-      on(`game/${state.key}/results`, results => commit('results', results));
-
-      on(`game/${state.key}/round`, round => {
-        if (!round) {
-          commit('round', { round: -1 });
-          return;
-        }
-        if (round.name) {
-          commit('roundName', { round: round.round, name: round.name });
-          return;
-        }
-        commit('round', { round: round.round, ping: round.ping });
-        commit('pos');
-        onRound();
+      commit('joinGame', key);
+      on(`game/${key}`, game => {
+        commit('game', game);
+        dispatch('round');
       });
     }
   }
