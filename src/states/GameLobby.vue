@@ -2,7 +2,6 @@
   <div>
     <h1>{{$store.state.pin}}</h1>
     <button @click="start" v-if="$store.state.isOwner" :disabled="Object.keys($store.state.users).length < 4">Start</button>
-    <button @click="start" v-if="$store.state.isOwner" >Starthack</button>
     <div v-if="results.length === 0">
       <h1 v-if="!isNaN($store.state.round) && $store.state.round > 0">Round {{$store.state.round + 1}}</h1>
       <hr/>
