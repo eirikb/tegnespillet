@@ -32,7 +32,7 @@
     // TODO:
     watch: {
       '$store.state.nick' () {
-      this.$store.dispatch('joinGame', '-KYQ9nP4Yg2R6A6unOTO');
+      // this.$store.dispatch('joinGame', '-KYQ9nP4Yg2R6A6unOTO');
         // this.$store.dispatch('joinGame', '-KYQ9nP4Yg2R6A6unOTO');
       }
     },

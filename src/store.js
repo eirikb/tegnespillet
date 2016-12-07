@@ -19,8 +19,8 @@ export default new Vuex.Store({
     pin: null,
     nick: '',
     pos: 0,
+    round: null,
     nextPos: 0,
-    round: -1,
     users: {},
     words: [],
     stamp: 0,
@@ -92,13 +92,13 @@ export default new Vuex.Store({
           auth.signInAnonymously();
         } else {
           commit('authenticated', user.uid);
-          once(`users/${user.uid}/nick`).then(nick => commit('nick', nick));
+          once(`users/${user.uid}`).then(nick => commit('nick', nick));
         }
       });
     },
 
     nick({ state }) {
-      db.ref(`users/${state.uid}`).update({ nick: state.nick });
+      db.ref(`users/${state.uid}`).set(state.nick);
     },
 
     createGame({ state }) {
@@ -117,7 +117,7 @@ export default new Vuex.Store({
       let round = state.round;
       let done = state.done;
       round++;
-      if (isNaN(round) || done === true) round = 0;
+      if (state.round === null || isNaN(round) || done === true) round = 0;
       db.ref(`game/${state.key}`).update({ round, ping: TIMESTAMP });
     },
 
@@ -134,7 +134,7 @@ export default new Vuex.Store({
     },
 
     guess({ state }, guess) {
-      const path = `game/${state.key}/results/${state.nextPos}/draw-${state.round + 1}`;
+      const path = `game/${state.key}/results/${state.nextPos}/guess-${state.round + 1}`;
       db.ref(path).set(guess);
       db.ref(`${path}-by`).set(state.uid);
     },
