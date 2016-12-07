@@ -34,3 +34,15 @@ export const on = (ref, cb) => db.ref(ref).on('value', res => {
 export const stamp = () => db.ref('.info/serverTimeOffset').once('value').then(res => res.val());
 
 export const TIMESTAMP = firebase.database.ServerValue.TIMESTAMP;
+
+export const fetchPin = () => {
+  let pin = Math.floor(1000 + Math.random() * 9000);
+  let ref = db.ref(`pin/${pin}`);
+  return ref.transaction(pino => pino === null || Date.now() - pino.stamp > 10 * 60 * 1000 ? {
+      stamp: Date.now()
+    } : undefined)
+    .then(res => res.committed ? {
+      pin,
+      ref
+    } : fetchPin());
+};

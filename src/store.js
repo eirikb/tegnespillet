@@ -1,24 +1,12 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { db, auth, on, once, stamp, storage, TIMESTAMP } from './fb';
+import { db, auth, on, once, stamp, storage, TIMESTAMP, fetchPin } from './fb';
 import toBlob from 'canvas-to-blob';
 
 const pickTime = 5000;
 const drawTime = 30000;
 const guessTime = 30000;
 const maxTime = pickTime + drawTime + guessTime;
-
-const fetchPin = () => {
-  let pin = Math.floor(1000 + Math.random() * 9000);
-  let ref = db.ref(`pin/${pin}`);
-  return ref.transaction(pino => pino === null || Date.now() - pino.stamp > 10 * 60 * 1000 ? {
-      stamp: Date.now()
-    } : undefined)
-    .then(res => res.committed ? {
-      pin,
-      ref
-    } : fetchPin());
-};
 
 Vue.use(Vuex);
 
