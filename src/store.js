@@ -55,12 +55,10 @@ export default new Vuex.Store({
     },
 
     startTimer(state) {
-      state.name = 'pick';
       state.timer = true;
     },
 
     stopTimer(state) {
-      state.name = 'game-lobby';
       state.timer = false;
     },
 
@@ -134,6 +132,7 @@ export default new Vuex.Store({
     },
 
     guess({ state }, guess) {
+      if (!guess) return;
       const path = `game/${state.key}/results/${state.nextPos}/guess-${state.round + 1}`;
       db.ref(path).set(guess);
       db.ref(`${path}-by`).set(state.uid);
@@ -161,10 +160,23 @@ export default new Vuex.Store({
       let maxTime = pick + drawTime + guessTime;
       if (state.timer || isNaN(diff) || diff >= maxTime) return;
 
+      const timer = (cb, interval) => {
+        interval -= diff;
+        if (interval <= 0) {
+          cb();
+          return;
+        }
+        setTimeout(cb, interval);
+      };
+
       commit('startTimer');
-      setTimeout(() => commit('go', 'draw'), pick - diff);
-      setTimeout(() => commit('go', 'guess'), pick + drawTime - diff);
-      setTimeout(() => commit('stopTimer'), maxTime - diff);
+      timer(() => commit('go', 'pick'), 0);
+      timer(() => commit('go', 'draw'), pick);
+      timer(() => commit('go', 'guess'), pick + drawTime);
+      timer(() => {
+        commit('go', 'game-lobby');
+        commit('stopTimer');
+      }, maxTime);
     },
 
     joinGame({ dispatch, commit, state }, key) {
@@ -180,3 +192,112 @@ export default new Vuex.Store({
     }
   }
 });
+
+
+
+// results
+// 0
+// draw-0: 
+// "https://firebasestorage.googleapis.com/v0/b/dra..."
+// draw-0-by: 
+// "7z5WkLQU9odMtvVBPlQcrXAtfRg1"
+// draw-1: 
+// "https://firebasestorage.googleapis.com/v0/b/dra..."
+// draw-1-by: 
+// "TWwKEj1KzlbAK0zSbZM88CdTbtB3"
+// guess-1: 
+// "Rundkjøring"
+// guess-1-by: 
+// "vLtgqPoMPiSYP0TQNOJgT07BC6a2"
+// guess-2: 
+// "Rundkj"
+// guess-2-by: 
+// "TPG2np5s6ZNs3ACu3gGmc9BgbIX2"
+// owner: 
+// "7z5WkLQU9odMtvVBPlQcrXAtfRg1"
+// word: 
+// "Rundkjøring"
+// 1
+// draw-0: 
+// "https://firebasestorage.googleapis.com/v0/b/dra..."
+// draw-0-by: 
+// "ON6fwWxd1VNJkqQXR9HXA8MkYkm2"
+// draw-1: 
+// "https://firebasestorage.googleapis.com/v0/b/dra..."
+// draw-1-by: 
+// "vLtgqPoMPiSYP0TQNOJgT07BC6a2"
+// guess-1: 
+// "avento"
+// guess-1-by: 
+// "7z5WkLQU9odMtvVBPlQcrXAtfRg1"
+// guess-2: 
+// "Avento"
+// guess-2-by: 
+// "TWwKEj1KzlbAK0zSbZM88CdTbtB3"
+// owner: 
+// "ON6fwWxd1VNJkqQXR9HXA8MkYkm2"
+// word: 
+// "Avento"
+// 2
+// draw-0: 
+// "https://firebasestorage.googleapis.com/v0/b/dra..."
+// draw-0-by: 
+// "TPG2np5s6ZNs3ACu3gGmc9BgbIX2"
+// draw-1: 
+// "https://firebasestorage.googleapis.com/v0/b/dra..."
+// draw-1-by: 
+// "7z5WkLQU9odMtvVBPlQcrXAtfRg1"
+// guess-1: 
+// "dromedar"
+// guess-1-by: 
+// "ON6fwWxd1VNJkqQXR9HXA8MkYkm2"
+// guess-2: 
+// "Dromedar"
+// guess-2-by: 
+// "vLtgqPoMPiSYP0TQNOJgT07BC6a2"
+// owner: 
+// "TPG2np5s6ZNs3ACu3gGmc9BgbIX2"
+// word: 
+// "Dromedar"
+// 3
+// draw-0: 
+// "https://firebasestorage.googleapis.com/v0/b/dra..."
+// draw-0-by: 
+// "TWwKEj1KzlbAK0zSbZM88CdTbtB3"
+// draw-1: 
+// "https://firebasestorage.googleapis.com/v0/b/dra..."
+// draw-1-by: 
+// "ON6fwWxd1VNJkqQXR9HXA8MkYkm2"
+// guess-1: 
+// "Ubåt"
+// guess-1-by: 
+// "TPG2np5s6ZNs3ACu3gGmc9BgbIX2"
+// guess-2: 
+// "ubåt"
+// guess-2-by: 
+// "7z5WkLQU9odMtvVBPlQcrXAtfRg1"
+// owner: 
+// "TWwKEj1KzlbAK0zSbZM88CdTbtB3"
+// word: 
+// "Ubåt"
+// 4
+// draw-0: 
+// "https://firebasestorage.googleapis.com/v0/b/dra..."
+// draw-0-by: 
+// "vLtgqPoMPiSYP0TQNOJgT07BC6a2"
+// draw-1: 
+// "https://firebasestorage.googleapis.com/v0/b/dra..."
+// draw-1-by: 
+// "TPG2np5s6ZNs3ACu3gGmc9BgbIX2"
+// guess-1: 
+// "Hus"
+// guess-1-by: 
+// "TWwKEj1KzlbAK0zSbZM88CdTbtB3"
+// guess-2: 
+// "hus"
+// guess-2-by: 
+// "ON6fwWxd1VNJkqQXR9HXA8MkYkm2"
+// owner: 
+// "vLtgqPoMPiSYP0TQNOJgT07BC6a2"
+// word: 
+// "Hus"

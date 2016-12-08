@@ -11,6 +11,10 @@
       </div>
     </div>
     
+    
+    <div v-if="$store.state.isDone">
+    DONE!
+    </div>
     <div v-for="result in results">
       <hr/>
       <h1>{{result.nick}} got the word {{result.word}}</h1>
