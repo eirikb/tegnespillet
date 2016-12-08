@@ -11,6 +11,12 @@
       </form>
     </div>
     <div>
+      <hr/>
+      <select v-model="category">
+        <option value="norsk">Norsk</option>
+        <option value="engelsk">English</option>
+        <option value="voksne">For voksne</option>
+      </select>
       <button @click="create">Create</button>
     </div>
   </div>
@@ -21,7 +27,8 @@
     data() {
       return {
         info: '',
-        pin: ''
+        pin: '',
+        category: 'norsk'
       };
     },
 
@@ -39,7 +46,7 @@
     methods: {
       create() {
         this.$store.dispatch('nick');
-        this.$store.dispatch('createGame').then(key =>
+        this.$store.dispatch('createGame', this.category).then(key =>
           this.$store.dispatch('joinGame', key));
       },
       joinGame() {

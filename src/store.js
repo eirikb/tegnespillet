@@ -99,9 +99,10 @@ export default new Vuex.Store({
       db.ref(`users/${state.uid}`).set(state.nick);
     },
 
-    createGame({ state }) {
+    createGame({ state }, category) {
       return fetchPin().then(res => {
         const ref = db.ref('game').push({
+          category,
           pin: res.pin,
           owner: state.uid
         });
@@ -119,8 +120,8 @@ export default new Vuex.Store({
       db.ref(`game/${state.key}`).update({ round, ping: TIMESTAMP });
     },
 
-    fetchWords({ commit }, count) {
-      return once('words/norsk')
+    fetchWords({ state, commit }, count) {
+      return once(`words/${state.category}`)
         .then(res => Object.values(res))
         .then(words => Array.from(Array(count).keys()).map(() => words.splice(Math.random() * words.length, 1)[0]))
         .then(words => commit('words', words));
