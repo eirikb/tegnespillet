@@ -1,8 +1,8 @@
 <template>
   <div>
     <h1>{{$store.state.pin}}</h1>
-    <button @click="start" v-if="$store.state.isOwner" :disabled="Object.keys($store.state.users).length < 4">Start</button>
-    <div v-if="results.length === 0">
+    <button @click="start" v-if="$store.state.isOwner" :disabled="Object.keys($store.state.users).length < 4 || $store.state.isDone">Start</button>
+    <div v-if="!$store.state.isDone">
       <h1 v-if="!isNaN($store.state.round) && $store.state.round > 0">Round {{$store.state.round + 1}}</h1>
       <hr/>
       Users:
@@ -11,49 +11,33 @@
       </div>
     </div>
     
-    
     <div v-if="$store.state.isDone">
-    DONE!
-    </div>
-    <div v-for="result in results">
-      <hr/>
-      <h1>{{result.nick}} got the word {{result.word}}</h1>
-      <div v-for="result in result.results">
-        <h2 v-if="result.guess">{{result.guessBy}} guessed {{result.guess}}</h2>
-        <div v-if="result.drawing">
-          <h2>{{result.drawingBy}} drew:</h2>
-          <img :src="result.drawing"/>
+      <h2>Results:</h2>
+      
+      <div v-for="(items, pos) in $store.state.results">
+        <h2>Word: {{items.word}}. Owner: {{$store.state.users[items.owner]}}</h2>
+        <div v-for="index in range">
+          <h3>{{$store.state.users[items[`draw-${index}-by`]]}} drew:</h3>
+          <img :src="items[`draw-${index}`]" />
+          <h3>
+            {{$store.state.users[items[`guess-${index + 1}-by`]]}} guessed:
+            {{items[`guess-${index + 1}`]}} 
+          </h3>
         </div>
+        <hr/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import { range } from 'lodash';
+
   export default {
     computed: {
-      results() {
-        return [];
-        // if (this.$store.state.done !== true) return [];
-
-        // let users = this.$store.state.users;
-        // let keys = Object.keys(users || {});
-
-        // return Object.keys(users).map(uid => {
-        //   let res = this.$store.state[pos];
-        //   return {
-        //     word: res.word,
-        //     nick: users[res.owner],
-        //     results: Array.from(Array(keys.length - 1), (_, round) => {
-        //       return {
-        //         drawing: res[`draw-${round}`],
-        //         drawingBy: users[res[`draw-${round}-by`]],
-        //         guess: res[`guess-${round}`],
-        //         guessBy: users[res[`guess-${round}-by`]]
-        //       };
-        //     })
-        //   };
-        // });
+      range() {
+        const size = Math.floor(Object.keys(this.$store.state.users || {}).length / 2);
+        return range(size);
       }
     },
 
