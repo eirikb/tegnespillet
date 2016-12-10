@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { db, auth, on, once, stamp, storage, TIMESTAMP, fetchPin } from './fb';
 import toBlob from 'canvas-to-blob';
+import { results, guess, draw, pick, gameLobby } from './demo';
 
 const pickTime = 5000;
 const drawTime = 30000;
@@ -10,8 +11,11 @@ const guessTime = 30000;
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  
+  // state: guess,
+  
   state: {
-    name: window.location.hash.match('words') ? 'words' : 'auth',
+    window.location.hash.match('words') ? 'words' : 'auth',
     key: '',
     uid: '',
     word: '',
