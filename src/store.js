@@ -15,7 +15,7 @@ export default new Vuex.Store({
   // state: guess,
   
   state: {
-    window.location.hash.match('words') ? 'words' : 'auth',
+    name: window.location.hash.match('words') ? 'words' : 'auth',
     key: '',
     uid: '',
     word: '',
