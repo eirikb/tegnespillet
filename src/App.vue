@@ -4,12 +4,87 @@
   </div>
 </template>
 
-<style>
-  html,
+<style lang="sass">
+  @import "base";
+  html {
+    box-sizing: border-box;
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
   body {
+    background-color: #f9f9f9;
+    font-family: 'Roboto Condensed', sans-serif;
+    color: #333;
     margin: 0;
   }
-  
+
+  h1 {
+    font-family: 'Indie Flower', cursive;
+    color: #222;
+    font-size: 27px;
+    margin: 0;
+    padding: 0;
+  }
+
+  // Buttons
+  .buttons {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
+  button {
+    background-color: $color5;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 10px 13px;
+    text-transform: uppercase;
+    &.blocked {
+      display: block;
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      width: 100%;
+    }
+  }
+
+  .slide-next {
+    align-self: flex-end;
+  }
+
+  label {
+    color: #555;
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin: 10px 0;
+    text-transform: uppercase;
+  }
+
+  .inputs {
+    width: 100%;
+  }
+
+  input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #555;
+    display: block;
+    font-size: 18px;
+    outline: none;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    text-align: center;
+    width: 100%;
+  }
+
   .bottom {
     position: fixed;
     bottom: 20px;
@@ -25,6 +100,46 @@
     width: 100%;
     background-color: #3498db;
   }
+
+  .lobby-wrapper {
+    height: 100vh;
+    width: 100%;
+  }
+
+  .lobby-header {
+    padding: 80px 20px 15px 20px;
+    text-align: center;
+  }
+
+  .magic {
+    display: block;
+    height: 100vh;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .slides {
+    display: flex;
+    flex-flow: row nowrap;
+    transform: translateX(0);
+    transition: all 200ms ease-out;
+    width: 200%;
+    &.slide2 {
+      transform: translateX(-100vw);
+    }
+  }
+
+  .slide {
+    flex: 0 0 100vw;
+    height: 100vh;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .footer {
+    flex: 0 0   100%;
+  }
+
 </style>
 
 <script>
