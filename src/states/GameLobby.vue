@@ -15,7 +15,12 @@
       <h2>Results:</h2>
       
       <div v-for="(items, pos) in $store.state.results">
-        <h2>Word: {{items.word}}. Owner: {{$store.state.users[items.owner]}}</h2>
+        <h2>
+          <small>Word:</small>
+          {{items.word}}. 
+          <small>Owner:</small>
+          {{$store.state.users[items.owner]}}
+        </h2>
         <div v-for="index in range">
           <h3>{{$store.state.users[items[`draw-${index}-by`]]}}
           <small>drew:</small>
