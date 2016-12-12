@@ -17,10 +17,13 @@
       <div v-for="(items, pos) in $store.state.results">
         <h2>Word: {{items.word}}. Owner: {{$store.state.users[items.owner]}}</h2>
         <div v-for="index in range">
-          <h3>{{$store.state.users[items[`draw-${index}-by`]]}} drew:</h3>
+          <h3>{{$store.state.users[items[`draw-${index}-by`]]}}
+          <small>drew:</small>
+          </h3>
           <img :src="items[`draw-${index}`]" />
           <h3>
-            {{$store.state.users[items[`guess-${index + 1}-by`]]}} guessed:
+            {{$store.state.users[items[`guess-${index + 1}-by`]]}}
+            <small>guessed</small>
             {{items[`guess-${index + 1}`]}} 
           </h3>
         </div>
