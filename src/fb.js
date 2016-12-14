@@ -4,11 +4,11 @@ import 'firebase/database';
 import 'firebase/storage';
 
 const config = {
-    apiKey: "AIzaSyDXcMe30cGMmHg_fiUIT1DBhgHMeK7ECq0",
-    authDomain: "drawesome-fd8ec.firebaseapp.com",
-    databaseURL: "https://drawesome-fd8ec.firebaseio.com",
-    storageBucket: "drawesome-fd8ec.appspot.com",
-    messagingSenderId: "61685273325"
+    apiKey: "AIzaSyCPog6OGIumA6XtRPXWwEjiz7G4t1uyE8c",
+    authDomain: "tegnespillet-3493f.firebaseapp.com",
+    databaseURL: "https://tegnespillet-3493f.firebaseio.com",
+    storageBucket: "tegnespillet-3493f.appspot.com",
+    messagingSenderId: "164552759843"
 };
 firebase.initializeApp(config);
 
@@ -36,13 +36,13 @@ export const stamp = () => db.ref('.info/serverTimeOffset').once('value').then(r
 export const TIMESTAMP = firebase.database.ServerValue.TIMESTAMP;
 
 export const fetchPin = () => {
-  let pin = Math.floor(1000 + Math.random() * 9000);
-  let ref = db.ref(`pin/${pin}`);
-  return ref.transaction(pino => pino === null || Date.now() - pino.stamp > 10 * 60 * 1000 ? {
-      stamp: Date.now()
-    } : undefined)
-    .then(res => res.committed ? {
-      pin,
-      ref
-    } : fetchPin());
+    let pin = Math.floor(1000 + Math.random() * 9000);
+    let ref = db.ref(`pin/${pin}`);
+    return ref.transaction(pino => pino === null || Date.now() - pino.stamp > 10 * 60 * 1000 ? {
+            stamp: Date.now()
+        } : undefined)
+        .then(res => res.committed ? {
+            pin,
+            ref
+        } : fetchPin());
 };

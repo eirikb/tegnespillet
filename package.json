@@ -1,5 +1,5 @@
 {
-  "name": "drawesome",
+  "name": "tegnespillet",
   "author": "Eirik Brandtzæg <eirikb@eirikb.no>",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
     "prepare": "shx rm -rf public/* && shx mkdir -p public",
     "copy": "shx cp index.html public && shx cp -r dist public",
-    "fb-deploy": "firebase deploy --project drawesome-fd8ec",
+    "fb-deploy": "firebase deploy --project tegnespillet-3493f",
     "deploy": "npm-run-all index prepare build copy fb-deploy"
   },
   "babel": {
