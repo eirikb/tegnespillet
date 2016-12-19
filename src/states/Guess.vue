@@ -1,11 +1,10 @@
 <template>
   <div>
     <ProgressBar :timeout="30"></ProgressBar>
-    <h2>Guess drawing</h2>
+    <h2>Gjett tegning</h2>
     <img v-if="$store.state.drawing" :src="$store.state.drawing" ref="image" />
     <form @submit.prevent="save">
       <input v-model="guess" placeholder="Guess">
-      <button type="submit">OK</button>
     </form>
   </div>
 </template>

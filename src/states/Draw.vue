@@ -1,11 +1,10 @@
 <template>
   <div>
     <ProgressBar :timeout="30"></ProgressBar>
-    <h2>Draw "{{$store.state.word}}"</h2>
+    <h2>Tegn "{{$store.state.word}}"</h2>
     <canvas ref="canvas"></canvas>
     <div class="bottom" ref="button">
-      <button @click="clear">Clear</button>
-      <button @click="setDrawing">OK</button>
+      <button @click="clear">Slett</button>
     </div>
   </div>
 </template>
