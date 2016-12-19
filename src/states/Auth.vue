@@ -1,6 +1,6 @@
 <template>
   <div>
-    Loading...
+    Kobler til...
   </div>
 </template>
 
