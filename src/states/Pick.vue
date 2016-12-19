@@ -1,7 +1,7 @@
 <template>
   <div>
     <ProgressBar :timeout="5"></ProgressBar>
-    Pick word:
+    Velg ord:
     <div v-for="w in $store.state.words">
       <label>
         <input type="radio" name="w" v-bind:value="w" v-model="word">
