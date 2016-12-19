@@ -15,23 +15,23 @@
     </div>
     
     <div v-if="$store.state.isDone">
-      <h2>Results:</h2>
+      <h2>Resultater:</h2>
       
       <div v-for="(items, pos) in $store.state.results">
         <h2>
-          <small>Word:</small>
+          <small>Ord:</small>
           {{items.word}}. 
-          <small>Owner:</small>
+          <small>Eier:</small>
           {{$store.state.users[items.owner]}}
         </h2>
         <div v-for="index in range">
           <h3>{{$store.state.users[items[`draw-${index}-by`]]}}
-          <small>drew:</small>
+          <small>tegnet:</small>
           </h3>
           <img :src="items[`draw-${index}`]" />
           <h3>
             {{$store.state.users[items[`guess-${index + 1}-by`]]}}
-            <small>guessed</small>
+            <small>gjettet</small>
             {{items[`guess-${index + 1}`]}} 
           </h3>
         </div>

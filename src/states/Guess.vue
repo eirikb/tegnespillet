@@ -4,7 +4,7 @@
     <h2>Gjett tegning</h2>
     <img v-if="$store.state.drawing" :src="$store.state.drawing" ref="image" />
     <form @submit.prevent="save">
-      <input v-model="guess" placeholder="Guess">
+      <input v-model="guess" placeholder="Gjett tegning">
     </form>
   </div>
 </template>
