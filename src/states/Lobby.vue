@@ -1,11 +1,11 @@
 <template>
   <div>
     <div>
-      <input v-model="$store.state.nick" placeholder="Nick" required>
+      <input v-model="$store.state.nick" placeholder="Kallenavn" required>
     </div>
     <div>
       <form @submit.prevent="joinGame">
-        <input type="number" v-model="pin" placeholder="Join game (PIN)" required>
+        <input type="number" v-model="pin" placeholder="Bli med i spill (PIN)" required>
         <button type="submit">Ok</button>
         {{info}}
       </form>
@@ -14,10 +14,10 @@
       <hr/>
       <select v-model="category">
         <option value="norsk">Norsk</option>
-        <option value="engelsk">English</option>
+        <option value="engelsk">Engelsk</option>
         <option value="voksne">For voksne</option>
       </select>
-      <button @click="create">Create</button>
+      <button @click="create">Opprett</button>
     </div>
   </div>
 </template>
