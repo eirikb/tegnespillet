@@ -8,7 +8,7 @@
     <div v-if="!$store.state.isDone">
       <h1 v-if="!isNaN($store.state.round) && $store.state.round > 0">Round {{$store.state.round + 1}}</h1>
       <hr/>
-      Users:
+      Brukere:
       <div v-for="(nick, uid) in $store.state.users">
         {{nick}}
       </div>
