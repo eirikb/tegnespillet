@@ -158,6 +158,18 @@ export default new Vuex.Store({
       return once(`pin/${pin}`).then(res => (res || {}).game);
     },
 
+    setScore({state}, data) {
+      const items = state.results[data.pos];
+      const drawnBy = items[`draw-${data.index}-by`];
+      const guessedBy = items[`guess-${data.index + 1}-by`];
+      const correct = !items.correct;
+      [drawnBy, guessedBy].forEach(uid =>
+        db.ref(`game/${state.key}/score/${uid}`).set(
+          ((state.score || {})[uid] || 0) + (correct ? 1 : -1)
+        ));
+      db.ref(`game/${state.key}/results/${data.pos}/correct-${data.index}`).set(correct);
+    },
+
     round({ state, commit }) {
       let diff = Date.now() - state.ping + state.stamp;
       let pick = 0;

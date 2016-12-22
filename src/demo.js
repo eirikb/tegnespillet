@@ -36,6 +36,7 @@ export const results = {
   isDone: true,
   isOwner: true,
   pin: 1337,
+  key: 'dummy',
   results: [{
     "draw-0": "https://firebasestorage.googleapis.com/v0/b/drawesome-fd8ec.appspot.com/o/game%2F-KYckloVWlFL6XCFV5EJ%2Fresults%2F0%2Fdraw-0.jpg?alt=media&token=6dc7eb0d-ba47-4ee4-a481-f69940ffea8f",
     "draw-0-by": "65g9mllpKKQMmZajUmReIF1lG363",
@@ -46,7 +47,9 @@ export const results = {
     "guess-2": "Potet",
     "guess-2-by": "WI9KXN4UCdhbQyCw1W5DE7Wzab62",
     "owner": "65g9mllpKKQMmZajUmReIF1lG363",
-    "word": "Hval"
+    "word": "Hval",
+    "correct-0": true,
+    "correct-1": true
   }, {
     "draw-0": "https://firebasestorage.googleapis.com/v0/b/drawesome-fd8ec.appspot.com/o/game%2F-KYckloVWlFL6XCFV5EJ%2Fresults%2F1%2Fdraw-0.jpg?alt=media&token=77cce524-bf75-4d93-a42b-971bb2751626",
     "draw-0-by": "WI9KXN4UCdhbQyCw1W5DE7Wzab62",

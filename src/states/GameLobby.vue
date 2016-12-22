@@ -31,7 +31,7 @@
           <small>Eier:</small>
           {{$store.state.users[items.owner]}}
         </h2>
-        <div v-for="index in range">
+        <div v-for="index in range" :class="{correct: items[`correct-${index}`]}">
           <h3>{{$store.state.users[items[`draw-${index}-by`]]}}
             <small>tegnet:</small>
           </h3>
@@ -40,6 +40,9 @@
             {{$store.state.users[items[`guess-${index + 1}-by`]]}}
             <small>gjettet</small>
             {{items[`guess-${index + 1}`]}}
+            <button v-if="$store.state.isOwner" @click="$store.dispatch('setScore', { pos, index })">
+              Gi poeng
+            </button>
           </h3>
         </div>
         <hr/>
@@ -72,4 +75,5 @@
       }
     }
   };
+
 </script>
