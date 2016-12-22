@@ -64,7 +64,7 @@
       users() {
         return orderBy(map(this.$store.state.users, (nick, uid) => ({
           nick,
-          score: this.$store.state.score[uid]
+          score: (this.$store.state.score || {})[uid] || 0
         })), 'score', 'desc');
       }
     },
