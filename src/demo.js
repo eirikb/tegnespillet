@@ -7,6 +7,12 @@ export const gameLobby = {
     b: 'Peiring',
     c: 'pling',
     d: 'Donald trump'
+  },
+  score: {
+    a: 10,
+    b: 1,
+    c: 4,
+    d: 0
   }
 };
 
