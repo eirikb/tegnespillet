@@ -14,7 +14,9 @@
   import signature_pad from 'signature_pad';
 
   export default {
-    components: { ProgressBar },
+    components: {
+      ProgressBar
+    },
 
     mounted() {
       this.round = this.$store.state.round;
@@ -36,17 +38,13 @@
     },
 
     beforeDestroy() {
-      this.setDrawing();
+      const data = this.$refs.canvas.toDataURL('image/jpeg');
+      this.$store.dispatch('setDrawing', data);
     },
 
     methods: {
       clear() {
         this.drawing.clear();
-      },
-
-      setDrawing() {
-        let data = this.$refs.canvas.toDataURL('image/jpeg');
-        this.$store.dispatch('setDrawing', data);
       }
     }
   };

@@ -20,6 +20,10 @@ h1 {
   font-size: 27px;
   margin: 0;
   padding: 0;
+  
+  &.pin {
+    font-size: 45px;
+  }
 }
 
 // Buttons
@@ -150,4 +154,5 @@ ul {
 
 .correct {
   background-color: #4caf50;
+  color: white;
 }

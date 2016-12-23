@@ -1,23 +1,21 @@
 <template>
   <div>
     <div>
-      <input v-model="$store.state.nick" placeholder="Kallenavn" required>
+      <input v-model="$store.state.nick" placeholder="Kallenavn">
     </div>
     <div>
       <form @submit.prevent="joinGame">
-        <input type="number" v-model="pin" placeholder="Bli med i spill (PIN)" required>
-        <button type="submit">Ok</button>
+        <input type="number" v-model="pin" placeholder="PIN" required>
+        <button class="blocked" type="submit">Bli med</button>
         {{info}}
       </form>
     </div>
     <div>
       <hr/>
-      <select v-model="category">
-        <option value="norsk">Norsk</option>
-        <option value="engelsk">Engelsk</option>
-        <option value="voksne">For voksne</option>
-      </select>
-      <button @click="create">Opprett</button>
+      Opprett spill:
+      <button class="blocked" @click="create('norsk')">Norsk</button>
+      <button class="blocked" @click="create('engelsk')">Engelsk</button>
+      <button class="blocked" @click="create('voksne')">For voksne</button>
     </div>
   </div>
 </template>
@@ -27,8 +25,7 @@
     data() {
       return {
         info: '',
-        pin: '',
-        category: 'norsk'
+        pin: ''
       };
     },
 
@@ -44,9 +41,9 @@
     },
 
     methods: {
-      create() {
+      create(category) {
         this.$store.dispatch('nick');
-        this.$store.dispatch('createGame', this.category).then(key =>
+        this.$store.dispatch('createGame', category).then(key =>
           this.$store.dispatch('joinGame', key));
       },
       joinGame() {

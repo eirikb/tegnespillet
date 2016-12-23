@@ -1,14 +1,14 @@
 <template>
   <div>
-    <h1>{{$store.state.pin}}</h1>
+    <h1 class="pin">{{$store.state.pin}}</h1>
     <button @click="start" v-if="$store.state.isOwner"
             :disabled="Object.keys($store.state.users).length < 4 || $store.state.isDone">Start
     </button>
-    <p v-if="Object.keys($store.state.users).length < 4 || $store.state.isDone">
+    <p v-if="Object.keys($store.state.users).length < 4">
       Må ha minst fire spillere
     </p>
-    <div v-if="!$store.state.isDone">
-      <h1 v-if="!isNaN($store.state.round) && $store.state.round > 0">Round {{$store.state.round + 1}}</h1>
+    <div>
+      <h1 v-if="!isNaN($store.state.round) && $store.state.round > 0">Runde {{$store.state.round + 1}}</h1>
       <hr/>
       Brukere:
       <ul v-for="user in users">
@@ -22,6 +22,7 @@
     </div>
 
     <div v-if="$store.state.isDone">
+      <hr>
       <h2>Resultater:</h2>
 
       <div v-for="(items, pos) in $store.state.results">
