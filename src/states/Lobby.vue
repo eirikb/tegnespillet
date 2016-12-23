@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 class="title lobby-header">Tegnespillet</h1>
     <div>
       <input v-model="$store.state.nick" placeholder="Kallenavn">
     </div>

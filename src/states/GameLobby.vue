@@ -2,13 +2,15 @@
   <div>
     <h1 class="pin">{{$store.state.pin}}</h1>
     <button @click="start" v-if="$store.state.isOwner"
-            :disabled="Object.keys($store.state.users).length < 4 || $store.state.isDone">Start
+            :disabled="Object.keys($store.state.users).length < 4">Start
     </button>
     <p v-if="Object.keys($store.state.users).length < 4">
       Må ha minst fire spillere
     </p>
     <div>
-      <h1 v-if="!isNaN($store.state.round) && $store.state.round > 0">Runde {{$store.state.round + 1}}</h1>
+      <h2 v-if="!$store.state.isDone && $store.state.round >= 0 && $store.state.results">
+        Runde {{$store.state.round + 1}}
+      </h2>
       <hr/>
       Brukere:
       <ul v-for="user in users">
@@ -53,7 +55,12 @@
 </template>
 
 <script>
-  import { orderBy, map, range } from 'lodash';
+  import {
+    orderBy,
+    map,
+    range
+  }
+  from 'lodash';
 
   export default {
     computed: {
@@ -76,5 +83,4 @@
       }
     }
   };
-
 </script>

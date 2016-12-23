@@ -147,7 +147,10 @@ export default new Vuex.Store({
       let round = state.round;
       let done = state.done;
       round++;
-      if (state.round === null || isNaN(round) || done === true) round = 0;
+      if (state.isDone || state.round === null || isNaN(round) || done === true) {
+        round = 0;
+        db.ref(`game/${state.key}/results`).set(null);
+      }
       db.ref(`game/${state.key}`).update({
         round,
         ping: TIMESTAMP
