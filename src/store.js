@@ -23,7 +23,7 @@ from './demo';
 
 const pickTime = 5000;
 const drawTime = 30000;
-const guessTime = 30000;
+const guessTime = 15000;
 
 Vue.use(Vuex);
 
