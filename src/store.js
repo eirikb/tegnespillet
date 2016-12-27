@@ -11,25 +11,25 @@ const guessTime = 30000;
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  
+  state: draw,
 
-  // state: guess,
-
-  state: {
-    name: window.location.hash.match('words') ? 'words' : 'auth',
-    key: '',
-    uid: '',
-    word: '',
-    drawing: '',
-    pin: null,
-    nick: '',
-    pos: 0,
-    round: null,
-    nextPos: 0,
-    users: {},
-    words: [],
-    stamp: 0,
-    timer: false,
-  },
+  // state: {
+  //   name: window.location.hash.match('words') ? 'words' : 'auth',
+  //   key: '',
+  //   uid: '',
+  //   word: '',
+  //   drawing: '',
+  //   pin: null,
+  //   nick: '',
+  //   pos: 0,
+  //   round: null,
+  //   nextPos: 0,
+  //   users: {},
+  //   words: [],
+  //   stamp: 0,
+  //   timer: false,
+  // },
 
   mutations: {
     authenticated(state, uid) {
@@ -69,10 +69,10 @@ export default new Vuex.Store({
     game(state, game) {
       Object.assign(state, game);
 
-      // let keys = Object.keys(state.users || {});
-      // keys.sort();
-      // state.pos = (keys.indexOf(state.uid) + state.round * 2) % keys.length;
-      // state.nextPos = (keys.indexOf(state.uid) + state.round * 2 + 1) % keys.length;
+      let keys = Object.keys(state.users || {});
+      keys.sort();
+      state.pos = (keys.indexOf(state.uid) + state.round * 2) % keys.length;
+      state.nextPos = (keys.indexOf(state.uid) + state.round * 2 + 1) % keys.length;
 
       // if (state.results) {
       //   let res = state.results[state.pos];
@@ -82,7 +82,7 @@ export default new Vuex.Store({
       //   if (nextRes) state.drawing = nextRes[`draw-${state.round}`];
       // }
 
-      // state.isOwner = state.owner === state.uid;
+      state.isOwner = state.owner === state.uid;
       // state.isDone = state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
     }
   },
@@ -117,15 +117,8 @@ export default new Vuex.Store({
     },
 
     startGame({ state }) {
-      let round = state.round;
-      let done = state.done;
-      round++;
-      if (state.isDone || state.round === null || isNaN(round) || done === true) {
-        round = 0;
-        db.ref(`game/${state.key}/results`).set(null);
-      }
       db.ref(`game/${state.key}`).update({
-        round,
+        results: null,
         ping: TIMESTAMP
       });
     },
@@ -212,8 +205,9 @@ export default new Vuex.Store({
       stamp().then(stamp => commit('stamp', stamp));
 
       on(`game/${key}`, game => {
+        console.log('onGame', game);
         commit('game', game);
-        dispatch('round');
+        // dispatch('round');
       });
     }
   }

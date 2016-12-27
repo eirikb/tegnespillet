@@ -1,6 +1,5 @@
 <template>
   <div>
-    <ProgressBar :timeout="30"></ProgressBar>
     <h2>Gjett tegning</h2>
     <img v-if="$store.state.drawing" :src="$store.state.drawing" ref="image" />
     <form @submit.prevent="save">
@@ -10,11 +9,7 @@
 </template>
 
 <script>
-  import ProgressBar from '../ProgressBar.vue';
-
   export default {
-    components: { ProgressBar },
-
     data() {
       return {
         guess: null
