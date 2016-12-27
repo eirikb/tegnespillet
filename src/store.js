@@ -12,24 +12,24 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   
-  state: draw,
+  // state: draw,
 
-  // state: {
-  //   name: window.location.hash.match('words') ? 'words' : 'auth',
-  //   key: '',
-  //   uid: '',
-  //   word: '',
-  //   drawing: '',
-  //   pin: null,
-  //   nick: '',
-  //   pos: 0,
-  //   round: null,
-  //   nextPos: 0,
-  //   users: {},
-  //   words: [],
-  //   stamp: 0,
-  //   timer: false,
-  // },
+  state: {
+    name: window.location.hash.match('words') ? 'words' : 'auth',
+    key: '',
+    uid: '',
+    word: '',
+    drawing: '',
+    pin: null,
+    nick: '',
+    pos: 0,
+    round: null,
+    nextPos: 0,
+    users: {},
+    words: [],
+    stamp: 0,
+    timer: false,
+  },
 
   mutations: {
     authenticated(state, uid) {
