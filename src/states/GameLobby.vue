@@ -55,12 +55,7 @@
 </template>
 
 <script>
-  import {
-    orderBy,
-    map,
-    range
-  }
-  from 'lodash';
+  import { orderBy, map, range } from 'lodash';
 
   export default {
     computed: {

@@ -1,25 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import {
-  db,
-  auth,
-  on,
-  once,
-  stamp,
-  storage,
-  TIMESTAMP,
-  fetchPin
-}
-from './fb';
+import { db, auth, on, once, stamp, storage, TIMESTAMP, fetchPin } from './fb';
 import toBlob from 'canvas-to-blob';
-import {
-  results,
-  guess,
-  draw,
-  pick,
-  gameLobby
-}
-from './demo';
+import { results, guess, draw, pick, gameLobby } from './demo';
 
 const pickTime = 5000;
 const drawTime = 30000;
@@ -86,49 +69,41 @@ export default new Vuex.Store({
     game(state, game) {
       Object.assign(state, game);
 
-      let keys = Object.keys(state.users || {});
-      keys.sort();
-      state.pos = (keys.indexOf(state.uid) + state.round * 2) % keys.length;
-      state.nextPos = (keys.indexOf(state.uid) + state.round * 2 + 1) % keys.length;
+      // let keys = Object.keys(state.users || {});
+      // keys.sort();
+      // state.pos = (keys.indexOf(state.uid) + state.round * 2) % keys.length;
+      // state.nextPos = (keys.indexOf(state.uid) + state.round * 2 + 1) % keys.length;
 
-      if (state.results) {
-        let res = state.results[state.pos];
-        let nextRes = state.results[state.nextPos];
+      // if (state.results) {
+      //   let res = state.results[state.pos];
+      //   let nextRes = state.results[state.nextPos];
 
-        if (res) state.word = state.round === 0 ? res.word : res[`guess-${state.round}`];
-        if (nextRes) state.drawing = nextRes[`draw-${state.round}`];
-      }
+      //   if (res) state.word = state.round === 0 ? res.word : res[`guess-${state.round}`];
+      //   if (nextRes) state.drawing = nextRes[`draw-${state.round}`];
+      // }
 
-      state.isOwner = state.owner === state.uid;
-      state.isDone = state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
+      // state.isOwner = state.owner === state.uid;
+      // state.isDone = state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
     }
   },
 
   actions: {
-    auth({
-      commit,
-      dispatch
-    }) {
+    auth({ commit, dispatch }) {
       auth.onAuthStateChanged(user => {
         if (!user) {
           auth.signInAnonymously();
-        }
-        else {
+        } else {
           commit('authenticated', user.uid);
           once(`users/${user.uid}`).then(nick => commit('nick', nick));
         }
       });
     },
 
-    nick({
-      state
-    }) {
+    nick({ state }) {
       db.ref(`users/${state.uid}`).set(state.nick);
     },
 
-    createGame({
-      state
-    }, category) {
+    createGame({ state }, category) {
       return fetchPin().then(res => {
         const ref = db.ref('game').push({
           category,
@@ -141,9 +116,7 @@ export default new Vuex.Store({
       });
     },
 
-    startGame({
-      state
-    }) {
+    startGame({ state }) {
       let round = state.round;
       let done = state.done;
       round++;
@@ -157,19 +130,14 @@ export default new Vuex.Store({
       });
     },
 
-    fetchWords({
-      state,
-      commit
-    }, count) {
+    fetchWords({ state, commit }, count) {
       return once(`words/${state.category}`)
         .then(res => Object.values(res))
         .then(words => Array.from(Array(count).keys()).map(() => words.splice(Math.random() * words.length, 1)[0]))
         .then(words => commit('words', words));
     },
 
-    pickWord({
-      state
-    }, word) {
+    pickWord({ state }, word) {
       db.ref(`game/${state.key}/results/${state.pos}`)
         .set({
           word,
@@ -177,18 +145,14 @@ export default new Vuex.Store({
         });
     },
 
-    guess({
-      state
-    }, guess) {
+    guess({ state }, guess) {
       if (!guess) return;
       const path = `game/${state.key}/results/${state.nextPos}/guess-${state.round + 1}`;
       db.ref(path).set(guess);
       db.ref(`${path}-by`).set(state.uid);
     },
 
-    setDrawing({
-      state
-    }, data) {
+    setDrawing({ state }, data) {
       const blob = toBlob(data);
       const path = `game/${state.key}/results/${state.pos}/draw-${state.round}`;
       storage.ref().child(`${path}.jpg`).put(blob)
@@ -203,9 +167,7 @@ export default new Vuex.Store({
       return once(`pin/${pin}`).then(res => (res || {}).game);
     },
 
-    setScore({
-      state
-    }, data) {
+    setScore({ state }, data) {
       const items = state.results[data.pos];
       const drawnBy = items[`draw-${data.index}-by`];
       const guessedBy = items[`guess-${data.index + 1}-by`];
@@ -217,10 +179,7 @@ export default new Vuex.Store({
       db.ref(`game/${state.key}/results/${data.pos}/correct-${data.index}`).set(correct);
     },
 
-    round({
-      state,
-      commit
-    }) {
+    round({ state, commit }) {
       let diff = Date.now() - state.ping + state.stamp;
       let pick = 0;
       if (state.round === 0) pick = pickTime;
@@ -246,11 +205,7 @@ export default new Vuex.Store({
       }, maxTime);
     },
 
-    joinGame({
-      dispatch,
-      commit,
-      state
-    }, key) {
+    joinGame({ dispatch, commit, state }, key) {
       commit('joinGame', key);
 
       db.ref(`game/${state.key}/users/${state.uid}`).set(state.nick);
