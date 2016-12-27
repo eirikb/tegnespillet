@@ -13,6 +13,7 @@
 <script>
   import ProgressBar from '../ProgressBar.vue';
   import signature_pad from 'signature_pad';
+  import { last } from 'lodash';
 
   export default {
     components: {
@@ -26,13 +27,8 @@
       let button = this.$refs.button;
 
       const resizeCanvas = () => {
-        // const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        // canvas.getContext("2d").scale(ratio, ratio);
         canvas.width = window.innerWidth * 1;
         canvas.height = button.offsetTop - canvas.offsetTop * 1;
-        // canvas.width = canvas.offsetWidth * ratio;
-        // canvas.height = canvas.offsetHeight * ratio;
-        // canvas.getContext("2d").scale(ratio, ratio);
         this.drawing.clear();
       };
       window.onresize = resizeCanvas;
@@ -41,8 +37,11 @@
       });
 
       this.memory = [];
-      this.drawing.onEnd = (a, b, c) => {
-        this.memory.push(this.drawing.toDataURL());
+      this.drawing.onEnd = () => {
+        const dataUrl = this.drawing.toDataURL();
+        if (last(this.memory) != dataUrl) {
+          this.memory.push(dataUrl);
+        }
       };
       resizeCanvas();
     },
@@ -68,7 +67,7 @@
           this.drawing.clear();
           return;
         }
-        image.src = this.memory[this.memory.length - 1];
+        image.src = last(this.memory);
         image.onload = () => {
           this.drawing.clear();
           ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
