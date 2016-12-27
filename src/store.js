@@ -11,7 +11,7 @@ const guessTime = 30000;
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  
+
   // state: draw,
 
   state: {
@@ -33,11 +33,11 @@ export default new Vuex.Store({
 
   mutations: {
     authenticated(state, uid) {
-      state.name = 'lobby';
       state.uid = uid;
     },
 
     nick(state, nick) {
+      state.name = 'lobby';
       state.nick = nick;
     },
 
@@ -94,7 +94,9 @@ export default new Vuex.Store({
           auth.signInAnonymously();
         } else {
           commit('authenticated', user.uid);
-          once(`users/${user.uid}`).then(nick => commit('nick', nick));
+          once(`users/${user.uid}`).then(nick => {
+            commit('nick', nick);
+          });
         }
       });
     },
@@ -174,28 +176,29 @@ export default new Vuex.Store({
 
     round({ state, commit }) {
       let diff = Date.now() - state.ping + state.stamp;
-      let pick = 0;
-      if (state.round === 0) pick = pickTime;
-      let maxTime = pick + drawTime + guessTime;
-      if (state.timer || isNaN(diff) || diff >= maxTime) return;
+      console.log(diff);
+      // let pick = 0;
+      // if (state.round === 0) pick = pickTime;
+      // let maxTime = pick + drawTime + guessTime;
+      // if (state.timer || isNaN(diff) || diff >= maxTime) return;
 
-      const timer = (cb, interval) => {
-        interval -= diff;
-        if (interval <= 0) {
-          cb();
-          return;
-        }
-        setTimeout(cb, interval);
-      };
+      // const timer = (cb, interval) => {
+      //   interval -= diff;
+      //   if (interval <= 0) {
+      //     cb();
+      //     return;
+      //   }
+      //   setTimeout(cb, interval);
+      // };
 
-      commit('startTimer');
-      timer(() => commit('go', 'pick'), 0);
-      timer(() => commit('go', 'draw'), pick);
-      timer(() => commit('go', 'guess'), pick + drawTime);
-      timer(() => {
-        commit('go', 'game-lobby');
-        commit('stopTimer');
-      }, maxTime);
+      // commit('startTimer');
+      // timer(() => commit('go', 'pick'), 0);
+      // timer(() => commit('go', 'draw'), pick);
+      // timer(() => commit('go', 'guess'), pick + drawTime);
+      // timer(() => {
+      //   commit('go', 'game-lobby');
+      //   commit('stopTimer');
+      // }, maxTime);
     },
 
     joinGame({ dispatch, commit, state }, key) {
@@ -207,7 +210,7 @@ export default new Vuex.Store({
       on(`game/${key}`, game => {
         console.log('onGame', game);
         commit('game', game);
-        // dispatch('round');
+        dispatch('round');
       });
     }
   }
