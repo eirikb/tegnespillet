@@ -1,12 +1,13 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { db, auth, on, once, stamp, storage, TIMESTAMP, fetchPin } from './fb';
+import { update, db, auth, on, once, stamp, storage, TIMESTAMP, fetchPin } from './fb';
 import toBlob from 'canvas-to-blob';
 import { results, guess, draw, pick, gameLobby } from './demo';
+import { range, first } from 'lodash';
 
 const pickTime = 5000;
-const drawTime = 30000;
-const guessTime = 30000;
+const drawTime = 10000;
+const guessTime = 10000;
 
 Vue.use(Vuex);
 
@@ -24,11 +25,14 @@ export default new Vuex.Store({
     nick: '',
     pos: 0,
     round: null,
+    rounds: [],
     nextPos: 0,
     users: {},
     words: [],
     stamp: 0,
     timer: false,
+    interval: 0,
+    end: 0
   },
 
   mutations: {
@@ -58,12 +62,23 @@ export default new Vuex.Store({
       state.words = words;
     },
 
-    startTimer(state) {
+    startTimer(state, data) {
+      console.log('startTimer', data);
       state.timer = true;
+      state.name = data.name;
+      state.interval = data.interval;
+      state.round = data.round;
+      state.end = data.time;
     },
 
     stopTimer(state) {
+      console.log('stopTimer');
       state.timer = false;
+      state.round = null;
+    },
+
+    round(state, round) {
+      state.round = round;
     },
 
     game(state, game) {
@@ -82,8 +97,20 @@ export default new Vuex.Store({
       //   if (nextRes) state.drawing = nextRes[`draw-${state.round}`];
       // }
 
-      state.isOwner = state.owner === state.uid;
       // state.isDone = state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
+      if (state.rounds.length > 0) return;
+
+      state.isOwner = state.owner === state.uid;
+      state.endRound = Math.floor(Object.keys(state.users || {}).length / 2);
+
+      let end = pickTime;
+      state.rounds = [{ time: pickTime, name: 'pick', end }];
+      range(0, state.endRound).forEach(round => {
+        end += drawTime;
+        state.rounds.push({ time: drawTime, name: 'draw', end, round });
+        end += guessTime;
+        state.rounds.push({ time: guessTime, name: 'guess', end, round });
+      });
     }
   },
 
@@ -94,8 +121,12 @@ export default new Vuex.Store({
           auth.signInAnonymously();
         } else {
           commit('authenticated', user.uid);
-          once(`users/${user.uid}`).then(nick => {
-            commit('nick', nick);
+          Promise.all([
+            stamp(),
+            once(`users/${user.uid}`)
+          ]).then(res => {
+            commit('stamp', res[0]);
+            commit('nick', res[1]);
           });
         }
       });
@@ -118,8 +149,8 @@ export default new Vuex.Store({
       });
     },
 
-    startGame({ state }) {
-      db.ref(`game/${state.key}`).update({
+    startGame({ state, commit }) {
+      update(`game/${state.key}`, {
         results: null,
         ping: TIMESTAMP
       });
@@ -174,41 +205,32 @@ export default new Vuex.Store({
       db.ref(`game/${state.key}/results/${data.pos}/correct-${data.index}`).set(correct);
     },
 
-    round({ state, commit }) {
+    round({ state, commit, dispatch }) {
       let diff = Date.now() - state.ping + state.stamp;
-      console.log(diff);
-      // let pick = 0;
-      // if (state.round === 0) pick = pickTime;
-      // let maxTime = pick + drawTime + guessTime;
-      // if (state.timer || isNaN(diff) || diff >= maxTime) return;
+      if (isNaN(diff) || state.timer) return;
+      console.log('diff', diff, state.ping, state.ping, state.stamp);
 
-      // const timer = (cb, interval) => {
-      //   interval -= diff;
-      //   if (interval <= 0) {
-      //     cb();
-      //     return;
-      //   }
-      //   setTimeout(cb, interval);
-      // };
-
-      // commit('startTimer');
-      // timer(() => commit('go', 'pick'), 0);
-      // timer(() => commit('go', 'draw'), pick);
-      // timer(() => commit('go', 'guess'), pick + drawTime);
-      // timer(() => {
-      //   commit('go', 'game-lobby');
-      //   commit('stopTimer');
-      // }, maxTime);
+      const round = first(state.rounds.filter(time => diff <= time.end));
+      console.log('round', round);
+      if (round) {
+        const interval = round.end - diff;
+        commit('startTimer', Object.assign({ interval }, round));
+        setTimeout(() => {
+          commit('stopTimer');
+          dispatch('round');
+        }, interval);
+      } else {
+        commit('go', 'game-lobby');
+      }
     },
 
     joinGame({ dispatch, commit, state }, key) {
       commit('joinGame', key);
 
       db.ref(`game/${state.key}/users/${state.uid}`).set(state.nick);
-      stamp().then(stamp => commit('stamp', stamp));
 
       on(`game/${key}`, game => {
-        console.log('onGame', game);
+        console.log('onGame');
         commit('game', game);
         dispatch('round');
       });

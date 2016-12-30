@@ -33,29 +33,21 @@
       };
     },
 
-    created() {
-      this.$store.dispatch('auth');
-    },
-
     // TODO:
-    watch: {
-      '$store.state.nick' () {
-        // this.$store.dispatch('joinGame', '-KYUjwWpp4cWo2bt6Aa4');
-        console.log('time to play the pied piper');
-        const s = this.$store.state;
-        db.ref('game/dummy').set({
-          pin: 1337,
-          category: 'norsk',
-          owner: s.uid,
-          users: {
-            [s.uid]: s.nick,
-            a: 'Mr. A',
-            b: 'Mrs. B',
-            c: 'Just C'
-          }
-        });
-        this.$store.dispatch('joinGame', 'dummy');
-      }
+    mounted() {
+      const s = this.$store.state;
+      db.ref('game/dummy').set({
+        pin: 1337,
+        category: 'norsk',
+        owner: s.uid,
+        users: {
+          [s.uid]: s.nick,
+          a: 'Mr. A',
+          b: 'Mrs. B',
+          c: 'Just C'
+        }
+      });
+      this.$store.dispatch('joinGame', 'dummy');
     },
 
     methods: {

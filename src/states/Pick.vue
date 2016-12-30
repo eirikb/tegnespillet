@@ -1,6 +1,5 @@
 <template>
   <div>
-    <ProgressBar :timeout="5"></ProgressBar>
     Velg ord:
     <div v-for="w in $store.state.words">
       <label>
@@ -12,13 +11,7 @@
 </template>
 
 <script>
-  import ProgressBar from '../ProgressBar.vue';
-
   export default {
-    components: {
-      ProgressBar
-    },
-
     data() {
       return {
         word: ''

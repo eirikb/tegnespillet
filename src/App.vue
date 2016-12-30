@@ -2,10 +2,14 @@
   <div class="full">
     <div v-if="$store.state.round !== null">
       Round {{$store.state.round}}
+      Interval: {{$store.state.interval}}
       <span>Velg ord</span> 
+      Progressbar:
       <span v-for="round in $store.state.rounds">
-         <span>Tegn ord</span> 
-         <span>Gjett ord</span> 
+         <ProgressBar v-if="round.active" 
+          :timeout="$store.state.interval"
+          :maxtime="$store.state.end"></ProgressBar>
+         <span> {{round.name}} </span> 
       </span>
     </div>
     <component :is="$store.state.name"></component>
@@ -18,8 +22,11 @@
 
 <script>
   import states from './states';
+  import ProgressBar from './ProgressBar.vue';
 
   export default {
-    components: Object.assign({}, states)
+    components: Object.assign({
+      ProgressBar
+    }, states)
   };
 </script>
