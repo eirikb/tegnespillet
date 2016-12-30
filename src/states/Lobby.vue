@@ -17,10 +17,10 @@
     </div>
     <div>
       <hr/>
-      Opprett spill:
-      <button class="blocked" @click="create('norsk')">Norsk</button>
-      <button class="blocked" @click="create('engelsk')">Engelsk</button>
-      <button class="blocked" @click="create('voksne')">For voksne</button>
+      <p>Opprett spill:</p>
+      <button @click="create('norsk')">Norsk</button>
+      <button @click="create('engelsk')">Engelsk</button>
+      <button @click="create('voksne')">For voksne</button>
     </div>
   </div>
 </template>
