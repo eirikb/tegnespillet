@@ -31,7 +31,6 @@ export const on = (ref, cb) => db.ref(ref).on('value', res => {
     }, {});
   }
   if (!dirty) cb(val);
-  else console.log('was dirty');
   dirty = false;
 });
 

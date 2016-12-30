@@ -1,7 +1,9 @@
 <template>
   <div>
-  <button @click="join">Join</button>
-  <button @click="clean">Clean</button>
+    <div v-if="false">
+      <button @click="join">Join</button>
+      <button @click="clean">Clean</button>
+    </div>
     <h1 class="title lobby-header">Tegnespillet</h1>
     <div>
       <input v-model="$store.state.nick" placeholder="Kallenavn">
@@ -38,7 +40,7 @@
     },
 
     mounted() {
-      return;
+      // return;
       // TODO:
       db.ref('game/dummy').update({
         pin: 1337,
