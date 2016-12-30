@@ -1,6 +1,5 @@
 <template>
   <div>
-    <ProgressBar :timeout="30"></ProgressBar>
     <h2>Tegn "{{$store.state.word}}"</h2>
     <canvas ref="canvas"></canvas>
     <div class="bottom" ref="button">
@@ -11,15 +10,10 @@
 </template>
 
 <script>
-  import ProgressBar from '../ProgressBar.vue';
   import signature_pad from 'signature_pad';
   import { last } from 'lodash';
 
   export default {
-    components: {
-      ProgressBar
-    },
-
     mounted() {
       this.round = this.$store.state.round;
 

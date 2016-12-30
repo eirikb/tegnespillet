@@ -1,28 +1,28 @@
 <template>
-  <div ref="bar" class="progress" :style="style"></div>
+  <div class="progress" :style="{width: `${pos}%`}"></div>
 </template>
 
 <script>
   export default {
-    props: ['timeout'],
+    props: ['timeout', 'maxtime'],
 
     data() {
       return {
-        style: ''
+        pos: 100,
+        stamp: Date.now(),
+        interval: 0
       };
     },
-    watch: {
-      timeout() {
-        this.setStyle();
-      }
-    },
+
     mounted() {
-      this.setStyle();
+      this.interval = setInterval(() => {
+        const pos = this.timeout - (Date.now() - this.stamp);
+        this.pos = pos <= 0 ? 0 : pos / this.maxtime * 100;
+      }, 1000 / 60);
     },
-    methods: {
-      setStyle() {
-        setTimeout(() => this.style = this.timeout > 0 ? { width: '0%', transition: `width ${this.timeout - 1}s linear` } : '', 1000);
-      }
+
+    destroyed() {
+      clearInterval(this.interval);
     }
   };
 </script>

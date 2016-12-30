@@ -55,7 +55,7 @@
         'Lege',
         'Lommerusk',
         'Lus',
-        'Limpinne',
+        'Limstift',
         'Lysestake',
         'Mammut',
         'Mars',

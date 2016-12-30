@@ -1,6 +1,11 @@
 <template>
   <div>
-    Kobler til...
+    <span v-if="!$store.state.uid">
+      Kobler til...
+    </span>
+    <span v-else>
+      Logger på...
+    </span>
   </div>
 </template>
 

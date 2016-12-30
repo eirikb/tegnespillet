@@ -8,9 +8,6 @@
       Må ha minst fire spillere
     </p>
     <div>
-      <h2 v-if="!$store.state.isDone && $store.state.round >= 0 && $store.state.results">
-        Runde {{$store.state.round + 1}}
-      </h2>
       <hr/>
       Brukere:
       <ul v-for="user in users">
@@ -23,7 +20,7 @@
       </ul>
     </div>
 
-    <div v-if="$store.state.isDone">
+    <div v-if="$store.state.results.length > 0">
       <hr>
       <h2>Resultater:</h2>
 
@@ -55,12 +52,7 @@
 </template>
 
 <script>
-  import {
-    orderBy,
-    map,
-    range
-  }
-  from 'lodash';
+  import { orderBy, map, range } from 'lodash';
 
   export default {
     computed: {

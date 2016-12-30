@@ -1,6 +1,5 @@
 <template>
   <div>
-    <ProgressBar :timeout="30"></ProgressBar>
     <h2>Gjett tegning</h2>
     <img v-if="$store.state.drawing" :src="$store.state.drawing" ref="image" />
     <form @submit.prevent="save">
@@ -10,11 +9,7 @@
 </template>
 
 <script>
-  import ProgressBar from '../ProgressBar.vue';
-
   export default {
-    components: { ProgressBar },
-
     data() {
       return {
         guess: null
@@ -23,6 +18,7 @@
 
     mounted() {
       this.round = this.$store.state.round;
+      this.nextPos = this.$store.state.nextPos;
     },
 
     beforeDestroy() {
@@ -31,7 +27,11 @@
 
     methods: {
       save() {
-        this.$store.dispatch('guess', this.guess);
+        this.$store.dispatch('guess', {
+          round: this.round,
+          nextPos: this.nextPos,
+          guess: this.guess
+        });
       }
     }
   };
