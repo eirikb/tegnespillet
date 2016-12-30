@@ -2,7 +2,12 @@
   <div class="full">
     <div v-if="$store.state.round !== null">
       <span v-for="round in $store.state.rounds">
-        <span :class="{active: round.active}"> {{round.name}} </span> 
+        <span :class="{active: round.active}"> 
+          <span v-if="round.name === 'pick'">Velg</span>
+          <span v-if="round.name === 'draw'">Tegn</span>
+          <span v-if="round.name === 'guess'">Gjett</span>
+          >
+        </span> 
       </span>
       <span v-for="round in $store.state.rounds">
          <ProgressBar v-if="round.active" 

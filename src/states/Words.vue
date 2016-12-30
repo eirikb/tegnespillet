@@ -5,7 +5,10 @@
 </template>
 
 <script>
-  import { db } from '../fb';
+  import {
+    db
+  }
+  from '../fb';
 
   export default {
     created() {
@@ -52,7 +55,7 @@
         'Lege',
         'Lommerusk',
         'Lus',
-        'Limpinne',
+        'Limstift',
         'Lysestake',
         'Mammut',
         'Mars',
