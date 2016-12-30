@@ -6,8 +6,8 @@ import { results, guess, draw, pick, gameLobby } from './demo';
 import { range, first } from 'lodash';
 
 const pickTime = 5000;
-const drawTime = 10000;
-const guessTime = 10000;
+const drawTime = 30000;
+const guessTime = 30000;
 
 Vue.use(Vuex);
 
@@ -65,7 +65,7 @@ export default new Vuex.Store({
     },
 
     round(state, round) {
-      state.round = round || state.round || 0;
+      state.round = round || state.round;
 
       state.pos = (state.keys.indexOf(state.uid) + state.round * 2) % state.keys.length;
       state.nextPos = (state.keys.indexOf(state.uid) + state.round * 2 + 1) % state.keys.length;
@@ -78,11 +78,9 @@ export default new Vuex.Store({
         if (res) state.word = state.round === 0 ? res.word : res[`guess-${state.round}`];
         if (nextRes) state.drawing = nextRes[`draw-${state.round}`];
       }
-      console.log('round', state.results, state.round, state.pos, state.nextPos, state.word, state.drawing);
     },
 
     startTimer(state, data) {
-      console.log('startTimer', data);
       state.timer = true;
       state.name = data.name;
       state.interval = data.interval;

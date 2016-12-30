@@ -1,12 +1,12 @@
 <template>
   <div class="full">
     <div v-if="$store.state.round !== null">
-      <span v-for="round in $store.state.rounds">
+      <span v-for="(round, i) in $store.state.rounds">
         <span :class="{active: round.active}"> 
           <span v-if="round.name === 'pick'">Velg</span>
           <span v-if="round.name === 'draw'">Tegn</span>
           <span v-if="round.name === 'guess'">Gjett</span>
-          >
+          <span v-if="i < $store.state.rounds.length - 1"> > </span>
         </span> 
       </span>
       <span v-for="round in $store.state.rounds">

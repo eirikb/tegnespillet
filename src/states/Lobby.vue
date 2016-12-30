@@ -33,12 +33,12 @@
     data() {
       return {
         info: '',
-        // TODO:
         pin: ''
       };
     },
 
     mounted() {
+      return;
       // TODO:
       db.ref('game/dummy').update({
         pin: 1337,
