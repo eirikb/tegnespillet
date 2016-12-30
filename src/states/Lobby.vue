@@ -1,5 +1,7 @@
 <template>
   <div>
+  <button @click="join">Join</button>
+  <button @click="clean">Clean</button>
     <h1 class="title lobby-header">Tegnespillet</h1>
     <div>
       <input v-model="$store.state.nick" placeholder="Kallenavn">
@@ -29,28 +31,40 @@
     data() {
       return {
         info: '',
+        // TODO:
         pin: ''
       };
     },
 
-    // TODO:
     mounted() {
-      const s = this.$store.state;
-      db.ref('game/dummy').set({
+      // TODO:
+      db.ref('game/dummy').update({
         pin: 1337,
         category: 'norsk',
-        owner: s.uid,
-        users: {
-          [s.uid]: s.nick,
-          a: 'Mr. A',
-          b: 'Mrs. B',
-          c: 'Just C'
-        }
+        results: null,
+        ping: null
       });
+      const s = this.$store.state;
+      if (s.nick === 'Eirik') {
+        db.ref('game/dummy').update({
+          owner: s.uid,
+        });
+      }
       this.$store.dispatch('joinGame', 'dummy');
     },
 
     methods: {
+      clean() {
+        const s = this.$store.state;
+        db.ref('game/dummy').set({
+          owner: s.uid,
+          pin: 1337,
+          category: 'norsk'
+        });
+      },
+      join() {
+        this.$store.dispatch('joinGame', 'dummy');
+      },
       create(category) {
         this.$store.dispatch('nick');
         this.$store.dispatch('createGame', category).then(key =>

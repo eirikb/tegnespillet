@@ -8,9 +8,6 @@
       Må ha minst fire spillere
     </p>
     <div>
-      <h2 v-if="!$store.state.isDone && $store.state.round >= 0 && $store.state.results">
-        Runde {{$store.state.round + 1}}
-      </h2>
       <hr/>
       Brukere:
       <ul v-for="user in users">

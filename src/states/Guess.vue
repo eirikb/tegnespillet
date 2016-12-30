@@ -18,6 +18,7 @@
 
     mounted() {
       this.round = this.$store.state.round;
+      this.nextPos = this.$store.state.nextPos;
     },
 
     beforeDestroy() {
@@ -26,7 +27,11 @@
 
     methods: {
       save() {
-        this.$store.dispatch('guess', this.guess);
+        this.$store.dispatch('guess', {
+          round: this.round,
+          nextPos: this.nextPos,
+          guess: this.guess
+        });
       }
     }
   };

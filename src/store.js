@@ -6,8 +6,8 @@ import { results, guess, draw, pick, gameLobby } from './demo';
 import { range, first } from 'lodash';
 
 const pickTime = 5000;
-const drawTime = 10000;
-const guessTime = 10000;
+const drawTime = 30000;
+const guessTime = 30000;
 
 Vue.use(Vuex);
 
@@ -32,7 +32,8 @@ export default new Vuex.Store({
     stamp: 0,
     timer: false,
     interval: 0,
-    end: 0
+    end: 0,
+    keys: []
   },
 
   mutations: {
@@ -62,54 +63,54 @@ export default new Vuex.Store({
       state.words = words;
     },
 
+    round(state, round) {
+      state.round = round || state.round || 0;
+
+      state.pos = (state.keys.indexOf(state.uid) + state.round * 2) % state.keys.length;
+      state.nextPos = (state.keys.indexOf(state.uid) + state.round * 2 + 1) % state.keys.length;
+      state.isDone = state.round === state.endRound;
+
+      if (state.results) {
+        let res = state.results[state.pos];
+        let nextRes = state.results[state.nextPos];
+
+        if (res) state.word = state.round === 0 ? res.word : res[`guess-${state.round}`];
+        if (nextRes) state.drawing = nextRes[`draw-${state.round}`];
+      }
+      console.log('round', state.results, state.round, state.pos, state.nextPos, state.word, state.drawing);
+    },
+
     startTimer(state, data) {
       console.log('startTimer', data);
       state.timer = true;
       state.name = data.name;
       state.interval = data.interval;
-      state.round = data.round;
       state.end = data.time;
     },
 
     stopTimer(state) {
-      console.log('stopTimer');
       state.timer = false;
       state.round = null;
-    },
-
-    round(state, round) {
-      state.round = round;
     },
 
     game(state, game) {
       Object.assign(state, game);
 
-      let keys = Object.keys(state.users || {});
-      keys.sort();
-      state.pos = (keys.indexOf(state.uid) + state.round * 2) % keys.length;
-      state.nextPos = (keys.indexOf(state.uid) + state.round * 2 + 1) % keys.length;
+      state.isOwner = state.owner === state.uid;
 
-      // if (state.results) {
-      //   let res = state.results[state.pos];
-      //   let nextRes = state.results[state.nextPos];
+      state.keys = Object.keys(state.users || {});
+      state.keys.sort();
+      state.endRound = Math.floor(state.keys.length / 2);
 
-      //   if (res) state.word = state.round === 0 ? res.word : res[`guess-${state.round}`];
-      //   if (nextRes) state.drawing = nextRes[`draw-${state.round}`];
-      // }
-
-      // state.isDone = state.round > 0 && Math.floor(Object.keys(state.users || {}).length / 2) === state.round + 1;
       if (state.rounds.length > 0) return;
 
-      state.isOwner = state.owner === state.uid;
-      state.endRound = Math.floor(Object.keys(state.users || {}).length / 2);
-
       let end = pickTime;
-      state.rounds = [{ time: pickTime, name: 'pick', end }];
-      range(0, state.endRound).forEach(round => {
+      state.rounds = [{ id: 0, time: pickTime, name: 'pick', end }];
+      range(0, state.endRound).forEach((round, id) => {
         end += drawTime;
-        state.rounds.push({ time: drawTime, name: 'draw', end, round });
+        state.rounds.push({ id, time: drawTime, name: 'draw', end, round });
         end += guessTime;
-        state.rounds.push({ time: guessTime, name: 'guess', end, round });
+        state.rounds.push({ id, time: guessTime, name: 'guess', end, round });
       });
     }
   },
@@ -171,10 +172,10 @@ export default new Vuex.Store({
         });
     },
 
-    guess({ state }, guess) {
-      if (!guess) return;
-      const path = `game/${state.key}/results/${state.nextPos}/guess-${state.round + 1}`;
-      db.ref(path).set(guess);
+    guess({ state }, data) {
+      if (!data.guess) return;
+      const path = `game/${state.key}/results/${data.nextPos}/guess-${data.round + 1}`;
+      db.ref(path).set(data.guess);
       db.ref(`${path}-by`).set(state.uid);
     },
 
@@ -208,12 +209,11 @@ export default new Vuex.Store({
     round({ state, commit, dispatch }) {
       let diff = Date.now() - state.ping + state.stamp;
       if (isNaN(diff) || state.timer) return;
-      console.log('diff', diff, state.ping, state.ping, state.stamp);
 
       state.rounds.forEach(round => round.active = false);
       const round = first(state.rounds.filter(time => diff <= time.end));
-      console.log('round', round);
       if (round) {
+        commit('round', round.id);
         round.active = true;
         const interval = round.end - diff;
         commit('startTimer', Object.assign({ interval }, round));
@@ -232,8 +232,8 @@ export default new Vuex.Store({
       db.ref(`game/${state.key}/users/${state.uid}`).set(state.nick);
 
       on(`game/${key}`, game => {
-        console.log('onGame');
         commit('game', game);
+        commit('round');
         dispatch('round');
       });
     }
