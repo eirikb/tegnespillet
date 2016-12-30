@@ -210,9 +210,11 @@ export default new Vuex.Store({
       if (isNaN(diff) || state.timer) return;
       console.log('diff', diff, state.ping, state.ping, state.stamp);
 
+      state.rounds.forEach(round => round.active = false);
       const round = first(state.rounds.filter(time => diff <= time.end));
       console.log('round', round);
       if (round) {
+        round.active = true;
         const interval = round.end - diff;
         commit('startTimer', Object.assign({ interval }, round));
         setTimeout(() => {

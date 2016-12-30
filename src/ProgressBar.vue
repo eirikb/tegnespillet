@@ -8,6 +8,7 @@
 
     data() {
       return {
+        pos: 100,
         stamp: Date.now(),
         interval: 0
       };
@@ -15,19 +16,13 @@
 
     mounted() {
       this.interval = setInterval(() => {
-        console.log('ping', this.interval);
+        const pos = this.timeout - (Date.now() - this.stamp);
+        this.pos = pos <= 0 ? 0 : pos / this.maxtime * 100;
       }, 1000 / 60);
     },
 
-    unmounted() {
-      console.log('clear', this.interval);
+    destroyed() {
       clearInterval(this.interval);
-    },
-
-    computed: {
-      pos() {
-        return 50;
-      }
     }
   };
 </script>
