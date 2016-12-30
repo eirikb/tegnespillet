@@ -6,36 +6,36 @@ import { results, guess, draw, pick, gameLobby } from './demo';
 import { range, first } from 'lodash';
 
 const pickTime = 5000;
-const drawTime = 30000;
-const guessTime = 30000;
+const drawTime = 10000;
+const guessTime = 10000;
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
 
-  // state: draw,
+  state: pick,
 
-  state: {
-    name: window.location.hash.match('words') ? 'words' : 'auth',
-    key: '',
-    uid: '',
-    word: '',
-    drawing: '',
-    pin: null,
-    nick: '',
-    pos: 0,
-    round: null,
-    rounds: [],
-    nextPos: 0,
-    users: {},
-    words: [],
-    stamp: 0,
-    timer: false,
-    interval: 0,
-    end: 0,
-    keys: [],
-    results: []
-  },
+  // state: {
+  //   name: window.location.hash.match('words') ? 'words' : 'auth',
+  //   key: '',
+  //   uid: '',
+  //   word: '',
+  //   drawing: '',
+  //   pin: null,
+  //   nick: '',
+  //   pos: 0,
+  //   round: null,
+  //   rounds: [],
+  //   nextPos: 0,
+  //   users: {},
+  //   words: [],
+  //   stamp: 0,
+  //   timer: false,
+  //   interval: 0,
+  //   end: 0,
+  //   keys: [],
+  //   results: []
+  // },
 
   mutations: {
     authenticated(state, uid) {
@@ -65,7 +65,7 @@ export default new Vuex.Store({
     },
 
     round(state, round) {
-      state.round = round || state.round;
+      state.round = round || state.round || 0;
 
       state.pos = (state.keys.indexOf(state.uid) + state.round * 2) % state.keys.length;
       state.nextPos = (state.keys.indexOf(state.uid) + state.round * 2 + 1) % state.keys.length;

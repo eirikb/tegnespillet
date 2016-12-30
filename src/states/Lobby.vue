@@ -40,7 +40,7 @@
     },
 
     mounted() {
-      // return;
+      return;
       // TODO:
       db.ref('game/dummy').update({
         pin: 1337,

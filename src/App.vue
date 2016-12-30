@@ -1,6 +1,6 @@
 <template>
   <div class="full">
-    <div v-if="$store.state.round !== null">
+    <div v-if="$store.state.rounds.length > 0">
       <span v-for="(round, i) in $store.state.rounds">
         <span :class="{active: round.active}"> 
           <span v-if="round.name === 'pick'">Velg</span>
