@@ -20,7 +20,7 @@
       </ul>
     </div>
 
-    <div v-if="$store.state.isDone">
+    <div v-if="$store.state.results.length > 0">
       <hr>
       <h2>Resultater:</h2>
 

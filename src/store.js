@@ -6,8 +6,8 @@ import { results, guess, draw, pick, gameLobby } from './demo';
 import { range, first } from 'lodash';
 
 const pickTime = 5000;
-const drawTime = 30000;
-const guessTime = 30000;
+const drawTime = 10000;
+const guessTime = 10000;
 
 Vue.use(Vuex);
 
@@ -33,7 +33,8 @@ export default new Vuex.Store({
     timer: false,
     interval: 0,
     end: 0,
-    keys: []
+    keys: [],
+    results: []
   },
 
   mutations: {
@@ -105,12 +106,29 @@ export default new Vuex.Store({
       if (state.rounds.length > 0) return;
 
       let end = pickTime;
-      state.rounds = [{ id: 0, time: pickTime, name: 'pick', end }];
+      state.rounds = [{
+        id: 0,
+        time: pickTime,
+        name: 'pick',
+        end
+      }];
       range(0, state.endRound).forEach((round, id) => {
         end += drawTime;
-        state.rounds.push({ id, time: drawTime, name: 'draw', end, round });
+        state.rounds.push({
+          id,
+          time: drawTime,
+          name: 'draw',
+          end,
+          round
+        });
         end += guessTime;
-        state.rounds.push({ id, time: guessTime, name: 'guess', end, round });
+        state.rounds.push({
+          id,
+          time: guessTime,
+          name: 'guess',
+          end,
+          round
+        });
       });
     }
   },
@@ -152,12 +170,14 @@ export default new Vuex.Store({
 
     startGame({ state, commit }) {
       update(`game/${state.key}`, {
-        results: null,
+        // TODO:
+        // results: null,
         ping: TIMESTAMP
       });
     },
 
     fetchWords({ state, commit }, count) {
+      commit('words', []);
       return once(`words/${state.category}`)
         .then(res => Object.values(res))
         .then(words => Array.from(Array(count).keys()).map(() => words.splice(Math.random() * words.length, 1)[0]))
@@ -216,7 +236,9 @@ export default new Vuex.Store({
         commit('round', round.id);
         round.active = true;
         const interval = round.end - diff;
-        commit('startTimer', Object.assign({ interval }, round));
+        commit('startTimer', Object.assign({
+          interval
+        }, round));
         setTimeout(() => {
           commit('stopTimer');
           dispatch('round');
