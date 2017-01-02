@@ -17,8 +17,12 @@ export const gameLobby = {
 };
 
 export const pick = {
+  key: 'dummy',
+  uid: 'a',
+  pos: 0,
+  category: 'norsk',
   name: 'pick',
-  words: ['Kake', 'Tisselur']
+  words: []
 };
 
 export const draw = {

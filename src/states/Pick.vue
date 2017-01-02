@@ -1,14 +1,29 @@
 <template>
   <div>
-    Velg ord:
-    <div v-for="w in $store.state.words">
-      <label>
-        <input type="radio" name="w" v-bind:value="w" v-model="word">
+    <h2>Velg ord:</h2>
+    <div class="blocked" v-for="w in $store.state.words">
+      <span class="check">
+        <img v-if="isActive(w)" src="node_modules/evil-icons/assets/icons/ei-check.svg"> 
+      </span>
+      <button :class="{active: isActive(w)}" @click="word = w">
         {{w}}
-      </label>
+      </button>
     </div>
   </div>
 </template>
+
+<style>
+  .active {
+    background-color: #4caf50;
+  }
+  
+  .check,
+  .check>img {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+  }
+</style>
 
 <script>
   export default {
@@ -26,6 +41,12 @@
     watch: {
       word(word) {
         this.$store.dispatch('pickWord', word);
+      }
+    },
+
+    methods: {
+      isActive(w) {
+        return w === this.word;
       }
     }
   };

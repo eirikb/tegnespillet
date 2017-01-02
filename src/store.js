@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import { update, db, auth, on, once, stamp, storage, TIMESTAMP, fetchPin } from './fb';
 import toBlob from 'canvas-to-blob';
 import { range, first } from 'lodash';
+import { pick } from './demo';
 
 const pickTime = 5000;
 const drawTime = 30000;
