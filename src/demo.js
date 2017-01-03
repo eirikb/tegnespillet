@@ -13,7 +13,8 @@ export const gameLobby = {
     b: 1,
     c: 4,
     d: 0
-  }
+  },
+  results: []
 };
 
 export const pick = {
