@@ -14,13 +14,13 @@
         <button class="blocked" type="submit">Bli med</button>
         {{info}}
       </form>
-    </div>
-    <div>
-      <hr/>
-      <p>Opprett spill:</p>
-      <button @click="create('norsk')">Norsk</button>
-      <button @click="create('engelsk')">Engelsk</button>
-      <button @click="create('voksne')">For voksne</button>
+
+      <button @click="showCreate = !showCreate" class="blocked">Opprett</button>
+      <div v-show="showCreate">
+        <button @click="create('norsk')">Norsk</button>
+        <button @click="create('engelsk')">Engelsk</button>
+        <button @click="create('voksne')">For voksne</button>
+      </div>
     </div>
   </div>
 </template>
@@ -30,6 +30,7 @@
     data() {
       return {
         info: '',
+        showCreate: false,
         pin: ''
       };
     },
@@ -41,11 +42,11 @@
           this.$store.dispatch('joinGame', key));
       },
       joinGame() {
-        this.info = 'Looking up game...';
+        this.info = 'Kobler til spill...';
         this.$store.dispatch('nick');
         this.$store.dispatch('getGameByPin', this.pin).then(key => {
           if (!key) {
-            this.info = 'Game not found';
+            this.info = 'Fant ikke spill';
             return;
           }
           this.$store.dispatch('joinGame', key);
