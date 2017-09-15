@@ -1,11 +1,6 @@
 <template>
   <div>
-    <span v-if="!$store.state.uid">
-      Kobler til...
-    </span>
-    <span v-else>
-      Logger på...
-    </span>
+    <h1 class="title lobby-header">Tegnespillet</h1>
   </div>
 </template>
 
